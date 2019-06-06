@@ -10,8 +10,8 @@ function resetBoard(){
         columns = row.querySelectorAll('div');
         switch (row_index) {
             case '8':                
-                columns.forEach(x => {                    
-                    if (x.attributes['col-index'] === 'A' || x.attributes['col-index'] === 'H'){
+                columns.forEach(x => {               
+                    if (x.attributes['col-index'].value === 'A' || x.attributes['col-index'].value === 'H'){
                         x.innerHTML = '<i class="fas fa-chess-rook black"></i>';
                     }
                 });
@@ -23,7 +23,11 @@ function resetBoard(){
                 columns.forEach(x => {x.innerHTML = '<i class="fas fa-chess-pawn white"></i>'});
                 break;
             case '1':
-
+                columns.forEach(x => {               
+                    if (x.attributes['col-index'].value === 'A' || x.attributes['col-index'].value === 'H'){
+                        x.innerHTML = '<i class="fas fa-chess-rook white"></i>';
+                    }
+                });
                 break;
             default:
                 break;
