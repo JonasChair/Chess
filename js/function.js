@@ -88,29 +88,40 @@ function displayMoves(){
 };
 
 function toggleHighlight(peace,moved,column,row,clicked){
-    if(selected !== clicked){
-        for(var i = 0; i < highlighted.length; i++){
+    var rows = document.querySelectorAll('.game-board .row'),
+        maxDistance,
+        direction = (clicked.classList.contains('black')? -1 : 1);
+
+    for(var i = 0; i < highlighted.length; i++){
         highlighted[i].classList.remove('highlight');
-        };
-        highlighted = [];
     };
-    var rows = document.querySelectorAll('.game-board .row');
+    highlighted = [];
+    if(selected === clicked){
+        return;
+    }
+    
     switch (peace) {
-        case 'pawn':
+        case 'pawn':            
             if(moved === null){
-                var i = 0;
-                rows.forEach(x  => {
-                    if(x.attributes['row-index'].value === (parseInt(row) + 1).toString() ||
-                    x.attributes['row-index'].value === (parseInt(row) + 2).toString()){
-                        x.querySelectorAll('div').forEach(y => {
-                            if (y.attributes['col-index'].value === column){
-                                y.classList.toggle('highlight');
-                                highlighted[i] = y;
-                                i++;
+                 maxDistance = 2;
+            }else{
+                maxDistance = 1;
+            };
+            for (var j = 0; j < maxDistance;) {
+                for(var i = 0; i < 8; i++) {
+                    if( rows.item(i).attributes['row-index'].value === (parseInt(row) + ( (j + 1) * direction ) ).toString() ) {
+                        var element = rows.item(i).querySelectorAll('div').item(horizontal[column] -1 );
+                        if(element.attributes['col-index'].value === column) {
+                            if(element.innerHTML !== '' || j === maxDistance) {
+                                return;
+                            }else{
+                                element.classList.add('highlight');
+                                highlighted[j] = element;
+                                j++;
                             };
-                        });
+                        };
                     };
-                });
+                };
             };
             break;
         case 'rook':
