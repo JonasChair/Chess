@@ -55,10 +55,6 @@ function resetBoard(){
                 break;
             default:
                 break;
-        }
-        
+        }   
     }
-    
 }
-
-resetBoard();
