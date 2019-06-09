@@ -1,23 +1,21 @@
 'use strict';
 
+var colors = {
+    white : 'white',
+    black : 'black',
+    none : ''
+}
 var peaces = {
-    pawn: 'pawn',
-    knight: 'knight',
-    bishop: 'bishop',
-    rook: 'rook',
-    queen: 'queen',
-    king: 'king',
+    pawn : 'pawn',
+    knight : 'knight',
+    bishop : 'bishop',
+    rook : 'rook',
+    queen : 'queen',
+    king : 'king',
+    empty : ''
 };
-var horizontal = {
-    A: 1,
-    B: 2,
-    C: 3,
-    D: 4,
-    E: 5,
-    F: 6,
-    G: 7,
-    H: 8
-};
+
+var horizontal = ['A','B','C','D','E','F','G','H'];
 
 var gameBoard = {
     turn: 'white',
