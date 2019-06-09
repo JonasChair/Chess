@@ -18,3 +18,10 @@ var horizontal = {
     G: 7,
     H: 8
 };
+
+var gameBoard = {
+    turn: 'white',
+    state: 'start',
+    board:
+        [[],[],[],[],[],[],[],[]]
+};
