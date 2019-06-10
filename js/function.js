@@ -1,39 +1,90 @@
 'use strict';
 
-// var selected = null,
-//     highlighted= [];
-
 function addEventListeners(data,type,funct){
     data.forEach(x => x.addEventListener(type,funct));
 }
 
 function displayMoves(){
+        var col = this.parentNode.attributes['col-index'].value,
+            row = this.parentNode.parentNode.attributes['row-index'].value; 
     
-    var col = this.parentNode.attributes['col-index'].value,
-        row = this.parentNode.parentNode.attributes['row-index'].value; 
-    
-    toggleSelect(row,col);
+    if (gameBoard.board[row][col].color === gameBoard.turn){
+        toggleSelect(row,col);
+        toggleHighlight(row,col);
 
-    renderBoard();
+        renderBoard();
+    }
 };
 
 function toggleSelect(row , col){
-    var peace = gameBoard.board[row][col],
-        selected = peace.selected;
-
-    if (selected === '' && peace.color === gameBoard.turn){
-        if (selectedPeace.row !== ''){
+    var peace = gameBoard.board[row][col];
+        if (selectedPeace.isSelected){
             gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
             updatePeaceHTML(selectedPeace.row,selectedPeace.col);
-        }
+        };
         selectedPeace.row = row;
         selectedPeace.col = col;
+        selectedPeace.isSelected = true;
         peace.selected = 'selected';
-        
-        console.log(selectedPeace);            
+                
         updatePeaceHTML(row,col);
+
+    return;
+}
+
+function toggleHighlight(row,col) {
+    var peace = gameBoard.board[row][col],
+        maxDistance,
+        highlightRow,
+        highlightCol,
+        direction = 1;
+
+    if(gameBoard.turn === colors.black){
+        direction = -1;
+    }
+    if(highlighted.length > 0){
+        highlighted.forEach(x => {
+            gameBoard.board[x.row][x.col].highlighted = '';
+        });
     };
+
+    switch (peace.name) {
         
+        case peaces.pawn:
+            if(!peace.moved){
+                maxDistance = 2;
+            }else{
+                maxDistance = 1;
+            };
+            for(var i = 0; i < maxDistance; i++){
+                highlightRow = parseInt(row) + (( i + 1 ) * direction);
+                highlightCol = parseInt(col);
+                if(gameBoard.board[highlightRow][highlightCol].name !== ''){
+                    return;
+                }else{
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[i] = {row: highlightRow, col: highlightCol};
+                }
+            };
+        break;
+        case peaces.rook:
+
+        break;
+        case peaces.knight:
+
+        break;
+        case peaces.bishop:
+
+        break;
+        case peaces.queen:
+
+        break;
+        case peaces.king:
+
+        break;
+        default :
+        return;
+    }
 //     var rows = document.querySelectorAll('.game-board .row'),
 //         maxDistance,
 //         direction = (clicked.classList.contains('black')? -1 : 1);
@@ -104,20 +155,22 @@ function initPeace(name , color , row , col){
             },
         HTML: ''
     };
-    if( newPeace.name !== ''){
+    if( newPeace.name === peaces.empty){
+        newPeace.HTML = '';
+    }else{
         newPeace.HTML = '<i class="fas fa-chess-' + newPeace.name + ' ' + newPeace.color + ' ' + newPeace.selected + ' ' + newPeace.highlighted + '"></i>';
-    };
+    }
     return newPeace;
 };
 
 function updatePeaceHTML(row,col){
     var peace = gameBoard.board[row][col];
-    peace.html = '<i class="fas fa-chess-' + peace.name + ' ' + peace.color + ' ' + peace.selected + ' ' + peace.highlighted + '"></i>';
+    peace.HTML = '<i class="fas fa-chess-' + peace.name + ' ' + peace.color + ' ' + peace.selected + ' ' + peace.highlighted + '"></i>';
 }
 
 function initBoard(){
-    gameBoard.turn = 'white';
-    gameBoard.state = 'start';
+    gameBoard.turn = colors.white;
+    gameBoard.state = states.start;
 
     for(var i = 0; i < gameBoard.board.length; i++){
         gameBoard.board[1][i] = initPeace(peaces.pawn,colors.white,1,i);
@@ -128,6 +181,10 @@ function initBoard(){
         gameBoard.board[4][i] = initPeace(peaces.empty,colors.none,4,i);
         gameBoard.board[5][i] = initPeace(peaces.empty,colors.none,5,i);
     }
+    //testing
+    gameBoard.board[2][3] = initPeace(peaces.pawn,colors.white,2,3);
+    gameBoard.board[3][4] = initPeace(peaces.rook,colors.black,3,4);
+    //
     gameBoard.board[0][0] = initPeace(peaces.rook,colors.white,0,0);
     gameBoard.board[0][7] = initPeace(peaces.rook,colors.white,0,7);
     gameBoard.board[0][1] = initPeace(peaces.knight,colors.white,0,1);
@@ -152,7 +209,7 @@ function renderBoard(){
     for(var i = 0; i < gameBoard.board.length; i++){
         HTML += '<div class="row" row-index="' + i + '">';
         for(var j = 0; j < gameBoard.board[i].length; j++){
-            HTML += '<div col-index="' + j + '">';
+            HTML += '<div col-index="' + j + '" class="'+ gameBoard.board[i][j].highlighted +'">';
             HTML += gameBoard.board[i][j].HTML;
             HTML += '</div>';
         }

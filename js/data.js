@@ -1,10 +1,16 @@
 'use strict';
 
+var states = {
+    start: 'start',
+    draw: 'draw',
+    blackWin: 'blackWin',
+    whiteWin: 'whiteWin'
+};
 var colors = {
     white : 'white',
     black : 'black',
     none : ''
-}
+};
 var peaces = {
     pawn : 'pawn',
     knight : 'knight',
@@ -19,8 +25,10 @@ var horizontal = ['A','B','C','D','E','F','G','H'];
 
 var selectedPeace = {
         row: '',
-        col: ''
+        col: '',
+        isSelected: false
 };
+var highlighted = [];
 
 var gameBoard = {
     turn: 'white',

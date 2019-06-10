@@ -8,12 +8,9 @@ body *{
 
 body{
     display: grid;
-    grid-template-areas: 
-        '. . .'
-        '. game .'
-        '. . .';
+    grid-template-areas: '. game .';
     grid-template-columns: 1fr 900px 1fr;
-    grid-template-rows: 100px 470px;
+    grid-template-rows: 470px;
 }
 
 .game {
@@ -88,6 +85,7 @@ body{
             }
         .game-board div {
             text-align: center;
+            z-index: -1;
         }
         .game-board i {
             line-height: 50px;
@@ -103,9 +101,9 @@ body{
         i.black {
             text-shadow: 2px 2px 8px white;
         }
-    .game-board div.highlight{
+    .game-board div.highlighted{
         outline: 3px solid blue;
-        z-index: 2;
+        outline-offset: -3px;
     }
 .info {
     grid-area: info;
