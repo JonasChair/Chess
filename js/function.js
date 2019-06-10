@@ -9,27 +9,31 @@ function addEventListeners(data,type,funct){
 
 function displayMoves(){
     
-    // var peace = this.attributes['peace'].value,
-    //     moved = this.getAttribute('moved'),
-    //     column = this.parentNode.attributes['col-index'].value,
-    //     row = this.parentNode.parentNode.attributes['row-index'].value; 
-        
-    // toggleHighlight(peace,moved,column,row,this);
+    var col = this.parentNode.attributes['col-index'].value,
+        row = this.parentNode.parentNode.attributes['row-index'].value; 
+    
+    toggleSelect(row,col);
 
-    // this.toggleAttribute('selected');
-    // this.classList.toggle('selected');
-    // if(this.attributes['selected']){
-    //     if(selected !== null && selected !== this){
-    //         selected.toggleAttribute('selected');
-    //         selected.classList.toggle('selected');
-    //     }
-    //     selected = this;
-    // }else{
-    //     selected = null;
-    // }
+    renderBoard();
 };
 
-function toggleHighlight(peace,moved,column,row,clicked){
+function toggleSelect(row , col){
+    var peace = gameBoard.board[row][col],
+        selected = peace.selected;
+
+    if (selected === '' && peace.color === gameBoard.turn){
+        if (selectedPeace.row !== ''){
+            gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
+            updatePeaceHTML(selectedPeace.row,selectedPeace.col);
+        }
+        selectedPeace.row = row;
+        selectedPeace.col = col;
+        peace.selected = 'selected';
+        
+        console.log(selectedPeace);            
+        updatePeaceHTML(row,col);
+    };
+        
 //     var rows = document.querySelectorAll('.game-board .row'),
 //         maxDistance,
 //         direction = (clicked.classList.contains('black')? -1 : 1);
@@ -87,13 +91,13 @@ function toggleHighlight(peace,moved,column,row,clicked){
 //     }  
 };
 
-function initPeace(name,color,row,col){
+function initPeace(name , color , row , col){
     var newPeace = {
-        type : name,
+        name : name,
         color : color,
         moved : false,
-        selected : ' ',
-        highlighted : ' ',
+        selected : '',
+        highlighted : '',
         coord: {
             row: row,
             col: horizontal[col]
@@ -101,10 +105,15 @@ function initPeace(name,color,row,col){
         HTML: ''
     };
     if( newPeace.name !== ''){
-        newPeace.HTML = '<i class="fas fa-chess-' + newPeace.type + ' ' + newPeace.color + ' ' + newPeace.selected + ' ' + newPeace.highlighted + '"></i>';
+        newPeace.HTML = '<i class="fas fa-chess-' + newPeace.name + ' ' + newPeace.color + ' ' + newPeace.selected + ' ' + newPeace.highlighted + '"></i>';
     };
     return newPeace;
 };
+
+function updatePeaceHTML(row,col){
+    var peace = gameBoard.board[row][col];
+    peace.html = '<i class="fas fa-chess-' + peace.name + ' ' + peace.color + ' ' + peace.selected + ' ' + peace.highlighted + '"></i>';
+}
 
 function initBoard(){
     gameBoard.turn = 'white';
@@ -140,14 +149,16 @@ function initBoard(){
 
 function renderBoard(){
     var HTML = '';
-        for(var i = 0; i < gameBoard.board.length; i++){
-            HTML += '<div class="row">';
-            for(var j = 0; j < gameBoard.board[i].length; j++){
-                HTML += '<div>';
-                HTML += gameBoard.board[i][j].HTML;
-                HTML += '</div>';
-            }
+    for(var i = 0; i < gameBoard.board.length; i++){
+        HTML += '<div class="row" row-index="' + i + '">';
+        for(var j = 0; j < gameBoard.board[i].length; j++){
+            HTML += '<div col-index="' + j + '">';
+            HTML += gameBoard.board[i][j].HTML;
             HTML += '</div>';
         }
-    return HTML;
+        HTML += '</div>';
+    }
+    document.querySelector('.game-board').innerHTML = HTML;
+    addEventListeners(document.querySelectorAll('.game-board .row > div > i'),"click",displayMoves);
+    return;
 }
