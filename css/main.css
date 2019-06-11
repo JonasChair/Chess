@@ -105,6 +105,9 @@ body{
         outline: 3px solid blue;
         outline-offset: -3px;
     }
+        .game-board div.highlighted > i{
+            text-shadow: 5px 2px 8px red;
+        }
 .info {
     grid-area: info;
 }

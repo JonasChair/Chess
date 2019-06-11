@@ -5,29 +5,28 @@ function addEventListeners(data,type,funct){
 }
 
 function displayMoves(){
-        var col = this.parentNode.attributes['col-index'].value,
-            row = this.parentNode.parentNode.attributes['row-index'].value; 
+    var col = this.parentNode.attributes['col-index'].value,
+        row = this.parentNode.parentNode.attributes['row-index'].value; 
     
     if (gameBoard.board[row][col].color === gameBoard.turn){
         toggleSelect(row,col);
         toggleHighlight(row,col);
-
         renderBoard();
     }
 };
 
 function toggleSelect(row , col){
     var peace = gameBoard.board[row][col];
-        if (selectedPeace.isSelected){
-            gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
-            updatePeaceHTML(selectedPeace.row,selectedPeace.col);
-        };
-        selectedPeace.row = row;
-        selectedPeace.col = col;
-        selectedPeace.isSelected = true;
-        peace.selected = 'selected';
-                
-        updatePeaceHTML(row,col);
+
+    if (selectedPeace.isSelected){
+        gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
+        updatePeaceHTML(selectedPeace.row,selectedPeace.col);
+    };
+    selectedPeace.row = row;
+    selectedPeace.col = col;
+    selectedPeace.isSelected = true;
+    peace.selected = 'selected';
+    updatePeaceHTML(row,col);
 
     return;
 }
@@ -37,6 +36,7 @@ function toggleHighlight(row,col) {
         maxDistance,
         highlightRow,
         highlightCol,
+        highlightedIndex = 0,
         direction = 1;
 
     if(gameBoard.turn === colors.black){
@@ -49,7 +49,6 @@ function toggleHighlight(row,col) {
     };
 
     switch (peace.name) {
-        
         case peaces.pawn:
             if(!peace.moved){
                 maxDistance = 2;
@@ -59,12 +58,25 @@ function toggleHighlight(row,col) {
             for(var i = 0; i < maxDistance; i++){
                 highlightRow = parseInt(row) + (( i + 1 ) * direction);
                 highlightCol = parseInt(col);
-                if(gameBoard.board[highlightRow][highlightCol].name !== ''){
+                if(i === 0){
+                    if( (highlightCol - 1) >= 0 && gameBoard.board[highlightRow][highlightCol - 1 ].color !== '' && gameBoard.board[highlightRow][highlightCol - 1 ].color !== gameBoard.turn){
+                        gameBoard.board[highlightRow][highlightCol - 1].highlighted = 'highlighted';
+                        highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol -1};
+                        highlightedIndex++;
+                    };
+                    if( (highlightCol + 1) <= 7 && gameBoard.board[highlightRow][highlightCol + 1 ].color !== '' && gameBoard.board[highlightRow][highlightCol + 1 ].color !== gameBoard.turn){
+                        gameBoard.board[highlightRow][highlightCol + 1].highlighted = 'highlighted';
+                        highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol + 1};
+                        highlightedIndex++;
+                    };
+                };
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
                     return;
                 }else{
                     gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
-                    highlighted[i] = {row: highlightRow, col: highlightCol};
-                }
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                };
             };
         break;
         case peaces.rook:
@@ -85,61 +97,6 @@ function toggleHighlight(row,col) {
         default :
         return;
     }
-//     var rows = document.querySelectorAll('.game-board .row'),
-//         maxDistance,
-//         direction = (clicked.classList.contains('black')? -1 : 1);
-
-//     for(var i = 0; i < highlighted.length; i++){
-//         highlighted[i].classList.remove('highlight');
-//     };
-//     highlighted = [];
-//     if(selected === clicked){
-//         return;
-//     }
-    
-//     switch (peace) {
-//         case 'pawn':            
-//             if(moved === null){
-//                  maxDistance = 2;
-//             }else{
-//                 maxDistance = 1;
-//             };
-//             for (var j = 0; j < maxDistance;) {
-//                 for(var i = 0; i < 8; i++) {
-//                     if( rows.item(i).attributes['row-index'].value === (parseInt(row) + ( (j + 1) * direction ) ).toString() ) {
-//                         var element = rows.item(i).querySelectorAll('div').item(horizontal[column] -1 );
-//                         if(element.attributes['col-index'].value === column) {
-//                             if(element.innerHTML !== '' || j === maxDistance) {
-//                                 return;
-//                             }else{
-//                                 element.classList.add('highlight');
-//                                 highlighted[j] = element;
-//                                 j++;
-//                             };
-//                         };
-//                     };
-//                 };
-//             };
-//             break;
-//         case 'rook':
-                        
-//             break;
-//         case 'bishop':
-            
-//             break;
-//         case 'knight':
-            
-//             break;
-//         case 'king':
-            
-//             break;
-//         case 'queen':
-            
-//             break;
-    
-//         default:
-//             break;
-//     }  
 };
 
 function initPeace(name , color , row , col){
@@ -217,5 +174,6 @@ function renderBoard(){
     }
     document.querySelector('.game-board').innerHTML = HTML;
     addEventListeners(document.querySelectorAll('.game-board .row > div > i'),"click",displayMoves);
+    // addEventListeners(document.querySelectorAll('.game-board .row > div.highlighted')),'click',);
     return;
 }
