@@ -205,20 +205,314 @@ function toggleHighlight(row,col) {
         break;
         case peaces.bishop:
             maxDistance = 7;
-            for(var i = 0; i < maxDistance; i++){
+            for(var i = 1; i <= maxDistance; i++){
                 highlightCol = parseInt(col) + i;
                 highlightRow = parseInt(row) + i;
-
+                if(highlightCol > 7 || highlightRow > 7){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
             }
-
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) - i;
+                highlightRow = parseInt(row) + i;
+                if(highlightCol < 0 || highlightRow > 7){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) + i;
+                highlightRow = parseInt(row) - i;
+                if(highlightCol > 7 || highlightRow < 0){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) - i;
+                highlightRow = parseInt(row) - i;
+                if(highlightCol < 0 || highlightRow < 0){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
         break;
         case peaces.queen:
-
+            maxDistance = 7;
+            for (var i = 1; i <= maxDistance; i++){
+                highlightRow = parseInt(row) + i;
+                highlightCol = parseInt(col);
+                if(highlightRow > 7){
+                    break;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for (var i = 1; i <= maxDistance; i++){
+                highlightRow = parseInt(row) - i;
+                highlightCol = parseInt(col);
+                if(highlightRow < 0){
+                    break;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for (var i = 1; i <= maxDistance; i++){
+                highlightRow = parseInt(row);
+                highlightCol = parseInt(col) + i;
+                if(highlightCol > 7){
+                    break;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for (var i = 1; i <= maxDistance; i++){
+                highlightRow = parseInt(row);
+                highlightCol = parseInt(col) - i;
+                if(highlightCol < 0){
+                    break;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) + i;
+                highlightRow = parseInt(row) + i;
+                if(highlightCol > 7 || highlightRow > 7){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) - i;
+                highlightRow = parseInt(row) + i;
+                if(highlightCol < 0 || highlightRow > 7){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) + i;
+                highlightRow = parseInt(row) - i;
+                if(highlightCol > 7 || highlightRow < 0){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) - i;
+                highlightRow = parseInt(row) - i;
+                if(highlightCol < 0 || highlightRow < 0){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
         break;
         case peaces.king:
-
+            maxDistance = 1;
+            for (var i = 1; i <= maxDistance; i++){
+                highlightRow = parseInt(row) + i;
+                highlightCol = parseInt(col);
+                if(highlightRow > 7){
+                    break;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for (var i = 1; i <= maxDistance; i++){
+                highlightRow = parseInt(row) - i;
+                highlightCol = parseInt(col);
+                if(highlightRow < 0){
+                    break;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for (var i = 1; i <= maxDistance; i++){
+                highlightRow = parseInt(row);
+                highlightCol = parseInt(col) + i;
+                if(highlightCol > 7){
+                    break;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for (var i = 1; i <= maxDistance; i++){
+                highlightRow = parseInt(row);
+                highlightCol = parseInt(col) - i;
+                if(highlightCol < 0){
+                    break;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) + i;
+                highlightRow = parseInt(row) + i;
+                if(highlightCol > 7 || highlightRow > 7){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) - i;
+                highlightRow = parseInt(row) + i;
+                if(highlightCol < 0 || highlightRow > 7){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) + i;
+                highlightRow = parseInt(row) - i;
+                if(highlightCol > 7 || highlightRow < 0){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
+            for(var i = 1; i <= maxDistance; i++){
+                highlightCol = parseInt(col) - i;
+                highlightRow = parseInt(row) - i;
+                if(highlightCol < 0 || highlightRow < 0){
+                    break;
+                }
+                if (gameBoard.board[highlightRow][highlightCol].color !== gameBoard.turn){
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                }
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    break;
+                }
+            }
         break;
-        default :
+        default:
         return;
     }
 };
@@ -263,8 +557,8 @@ function initBoard(){
         gameBoard.board[5][i] = initPeace(peaces.empty,colors.none,5,i);
     }
     //testing
-    gameBoard.board[2][3] = initPeace(peaces.pawn,colors.white,2,3);
-    gameBoard.board[3][4] = initPeace(peaces.knight,colors.black,3,4);
+    gameBoard.board[2][3] = initPeace(peaces.king,colors.white,2,3);
+    gameBoard.board[3][4] = initPeace(peaces.queen,colors.black,3,4);
     //
     gameBoard.board[0][0] = initPeace(peaces.rook,colors.white,0,0);
     gameBoard.board[0][7] = initPeace(peaces.rook,colors.white,0,7);
