@@ -9,7 +9,7 @@ function removeEventListeners(data,type,funct){
 
 function displayMoves(){
     var col = this.parentNode.attributes['col-index'].value,
-        row = this.parentNode.parentNode.attributes['row-index'].value; 
+        row = this.parentNode.parentNode.attributes['row-index'].value;
     
     if (gameBoard.board[row][col].color === gameBoard.turn){
         toggleSelect(row,col);
@@ -17,6 +17,52 @@ function displayMoves(){
         renderBoard();
     }
 };
+
+function getPath(row,col){
+    var peace = gameBoard.board[row][col],
+        maxDistance,
+        pathRow,
+        pathCol,
+        pathedIndex = 0,
+        direction = 1;
+
+        if(gameBoard.turn === colors.black){
+            direction = -1;
+        }
+
+        switch (peace.name) {
+        case peaces.pawn:
+            if(!peace.moved){
+                maxDistance = 2;
+            }else{
+                maxDistance = 1;
+            };
+            for(var i = 0; i < maxDistance; i++){
+                pathRow = parseInt(row) + (( i + 1 ) * direction);
+                pathCol = parseInt(col);
+                if(i === 0){
+                    if( (highlightCol - 1) >= 0 && gameBoard.board[highlightRow][highlightCol - 1 ].color !== '' && gameBoard.board[highlightRow][highlightCol - 1 ].color !== gameBoard.turn){
+                        gameBoard.board[highlightRow][highlightCol - 1].highlighted = 'highlighted';
+                        highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol -1};
+                        highlightedIndex++;
+                    };
+                    if( (highlightCol + 1) <= 7 && gameBoard.board[highlightRow][highlightCol + 1 ].color !== '' && gameBoard.board[highlightRow][highlightCol + 1 ].color !== gameBoard.turn){
+                        gameBoard.board[highlightRow][highlightCol + 1].highlighted = 'highlighted';
+                        highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol + 1};
+                        highlightedIndex++;
+                    };
+                };
+                if(gameBoard.board[highlightRow][highlightCol].name !== peaces.empty){
+                    return;
+                }else{
+                    gameBoard.board[highlightRow][highlightCol].highlighted = 'highlighted';
+                    highlighted[highlightedIndex] = {row: highlightRow, col: highlightCol};
+                    highlightedIndex++;
+                };
+            };
+        break;
+    return;
+}
 
 function toggleSelect(row , col){
     var peace = gameBoard.board[row][col];
