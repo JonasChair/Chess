@@ -3,6 +3,9 @@
 function addEventListeners(data,type,funct){
     data.forEach(x => x.addEventListener(type,funct));
 }
+function removeEventListeners(data,type,funct){
+    data.forEach(x => x.removeEventListener(type,funct));
+}
 
 function displayMoves(){
     var col = this.parentNode.attributes['col-index'].value,
@@ -22,10 +25,17 @@ function toggleSelect(row , col){
         gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
         updatePeaceHTML(selectedPeace.row,selectedPeace.col);
     };
-    selectedPeace.row = row;
-    selectedPeace.col = col;
-    selectedPeace.isSelected = true;
-    peace.selected = 'selected';
+    if(selectedPeace.row == row && selectedPeace.col == col){
+        selectedPeace.row = '';
+        selectedPeace.col = '';
+        selectedPeace.isSelected = false;        
+        return;
+    }else{
+        selectedPeace.row = row;
+        selectedPeace.col = col;
+        selectedPeace.isSelected = true;
+        peace.selected = 'selected';        
+    }
     updatePeaceHTML(row,col);
 
     return;
@@ -47,7 +57,9 @@ function toggleHighlight(row,col) {
             gameBoard.board[x.row][x.col].highlighted = '';
         });
     };
-
+    if(!selectedPeace.isSelected){
+        return;
+    }
     switch (peace.name) {
         case peaces.pawn:
             if(!peace.moved){
@@ -556,10 +568,6 @@ function initBoard(){
         gameBoard.board[4][i] = initPeace(peaces.empty,colors.none,4,i);
         gameBoard.board[5][i] = initPeace(peaces.empty,colors.none,5,i);
     }
-    //testing
-    gameBoard.board[2][3] = initPeace(peaces.king,colors.white,2,3);
-    gameBoard.board[3][4] = initPeace(peaces.queen,colors.black,3,4);
-    //
     gameBoard.board[0][0] = initPeace(peaces.rook,colors.white,0,0);
     gameBoard.board[0][7] = initPeace(peaces.rook,colors.white,0,7);
     gameBoard.board[0][1] = initPeace(peaces.knight,colors.white,0,1);
@@ -579,8 +587,40 @@ function initBoard(){
     gameBoard.board[7][4] = initPeace(peaces.king,colors.black,7,4);
 }
 
+function move(){
+    var col = this.attributes['col-index'].value,
+        row = this.parentNode.attributes['row-index'].value; 
+    gameBoard.board[row][col].name = gameBoard.board[selectedPeace.row][selectedPeace.col].name;
+    gameBoard.board[row][col].color = gameBoard.board[selectedPeace.row][selectedPeace.col].color;
+    gameBoard.board[row][col].moved = true;
+    updatePeaceHTML(row,col);
+        
+    if(highlighted.length > 0){
+        highlighted.forEach(x => {
+            gameBoard.board[x.row][x.col].highlighted = '';
+        });
+    };
+    
+    gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
+    gameBoard.board[selectedPeace.row][selectedPeace.col].name = peaces.empty;
+    gameBoard.board[selectedPeace.row][selectedPeace.col].color = colors.none;
+    gameBoard.board[selectedPeace.row][selectedPeace.col].moved = true;
+    updatePeaceHTML(selectedPeace.row,selectedPeace.col);
+    selectedPeace.row = '';
+    selectedPeace.col = '';
+    selectedPeace.isSelected = false;           
+    toggleTurn();
+    renderBoard();
+}
+
+function toggleTurn(){
+    gameBoard.turn = (gameBoard.turn === colors.white) ? colors.black : colors.white;
+}
+
 function renderBoard(){
     var HTML = '';
+    removeEventListeners(document.querySelectorAll('.game-board .row > div > i'),"click",displayMoves);
+    removeEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);   
     for(var i = 0; i < gameBoard.board.length; i++){
         HTML += '<div class="row" row-index="' + i + '">';
         for(var j = 0; j < gameBoard.board[i].length; j++){
@@ -592,6 +632,6 @@ function renderBoard(){
     }
     document.querySelector('.game-board').innerHTML = HTML;
     addEventListeners(document.querySelectorAll('.game-board .row > div > i'),"click",displayMoves);
-    // addEventListeners(document.querySelectorAll('.game-board .row > div.highlighted')),'click',);
+    addEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
     return;
 }
