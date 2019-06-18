@@ -593,6 +593,9 @@ function move(){
     gameBoard.board[row][col].name = gameBoard.board[selectedPeace.row][selectedPeace.col].name;
     gameBoard.board[row][col].color = gameBoard.board[selectedPeace.row][selectedPeace.col].color;
     gameBoard.board[row][col].moved = true;
+    if( (row == 7 || row == 0) && gameBoard.board[selectedPeace.row][selectedPeace.col].name == peaces.pawn){
+        gameBoard.board[row][col].name = promotion();
+    }
     updatePeaceHTML(row,col);
         
     if(highlighted.length > 0){
@@ -611,6 +614,10 @@ function move(){
     selectedPeace.isSelected = false;           
     toggleTurn();
     renderBoard();
+}
+
+function promotion(){
+    return peaces.queen;
 }
 
 function toggleTurn(){
