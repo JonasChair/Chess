@@ -2,15 +2,18 @@
 
 var states = {
     start: 'start',
+    inProgress: 'in progress',
     draw: 'draw',
     blackWin: 'blackWin',
     whiteWin: 'whiteWin'
-};
+}
+
 var colors = {
     white : 'white',
     black : 'black',
     none : ''
-};
+}
+
 var peaces = {
     pawn : 'pawn',
     knight : 'knight',
@@ -19,7 +22,7 @@ var peaces = {
     queen : 'queen',
     king : 'king',
     empty : ''
-};
+}
 
 var horizontal = ['A','B','C','D','E','F','G','H'];
 
@@ -27,7 +30,8 @@ var selectedPeace = {
         row: '',
         col: '',
         isSelected: false
-};
+}
+
 var highlighted = [];
 
 var path = [];
@@ -37,4 +41,4 @@ var gameBoard = {
     state: 'start',
     board:
         [[],[],[],[],[],[],[],[]]
-};
+}

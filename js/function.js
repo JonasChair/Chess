@@ -1,36 +1,37 @@
 'use strict';
 
-function addEventListeners(data,type,funct){
+function addEventListeners(data, type, funct) {
     data.forEach(x => x.addEventListener(type,funct));
 }
-function removeEventListeners(data,type,funct){
+
+function removeEventListeners(data, type, funct) {
     data.forEach(x => x.removeEventListener(type,funct));
 }
 
-function displayMoves(){
+function displayMoves() {
     var col = this.parentNode.attributes['col-index'].value,
         row = this.parentNode.parentNode.attributes['row-index'].value;
     
-    if (gameBoard.board[row][col].color === gameBoard.turn){
+    if (gameBoard.board[row][col].color === gameBoard.turn) {
         toggleSelect(row,col);
         getPath(row,col);
-        toggleHighlight(row,col);
+        toggleHighlight(path);
         renderBoard();
     }
-};
+}
 
-function getPath(row,col){
+function getPath(row, col) {
     var peace = gameBoard.board[row][col],
         maxDistance;
         path = [];
 
     switch (peace.name) {
         case peaces.pawn:
-            if(!peace.moved){
+            if(!peace.moved) {
                 maxDistance = 2;
-            }else{
+            } else {
                 maxDistance = 1;
-            };
+            }
             path = getPathPawn(row,col,maxDistance);
         break;
         case peaces.rook:
@@ -51,115 +52,116 @@ function getPath(row,col){
         case peaces.king:
             maxDistance = 1;
             path = getPathKing(row,col,maxDistance);
+        break;
         default:
     }
     return path;
 }
 
-function getPathPawn(row,col,maxDistance){
+function getPathPawn(row, col, maxDistance) {
     var pathRow,
         pathCol,
         direction = 1,
         pathIndex = 0,
         gbRow,
         path = [];
-    if(gameBoard.turn === colors.black){
+    if(gameBoard.turn === colors.black) {
         direction = -1;
     }    
-    for(var i = 1; i <= maxDistance; i++){
+    for(var i = 1; i <= maxDistance; i++) {
         pathRow = parseInt(row) + (( i ) * direction);
         pathCol = parseInt(col);
         gbRow = gameBoard.board[pathRow];
-        if(i === 1){
-            if( (pathCol - 1) >= 0 && gbRow[pathCol - 1 ].color !== '' && gbRow[pathCol - 1 ].color !== gameBoard.turn){
+        if(i === 1) {
+            if( (pathCol - 1) >= 0 && gbRow[pathCol - 1 ].color !== '' && gbRow[pathCol - 1 ].color !== gameBoard.turn) {
                 path[pathIndex] = {row: pathRow, col: pathCol -1};
                 pathIndex++;
             };
-            if( (pathCol + 1) <= 7 && gbRow[pathCol + 1 ].color !== '' && gbRow[pathCol + 1 ].color !== gameBoard.turn){
+            if( (pathCol + 1) <= 7 && gbRow[pathCol + 1 ].color !== '' && gbRow[pathCol + 1 ].color !== gameBoard.turn) {
                 path[pathIndex] = {row: pathRow, col: pathCol + 1};
                 pathIndex++;
             };
         };
-        if(gbRow[pathCol].name !== peaces.empty){
-            return;
-        }else{
+        if(gbRow[pathCol].name !== peaces.empty) {
+            return path;
+        } else {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
-        };
-    };
+        }
+    }
     return path;
 }
 
-function getPathRook(row,col,maxDistance){
+function getPathRook(row, col, maxDistance) {
     var pathRow,
         pathCol,
         gbPath,
         path = [],
         pathIndex = 0;
-    for (var i = 1; i <= maxDistance; i++){
+    for (var i = 1; i <= maxDistance; i++) {
         pathRow = parseInt(row) + i;
         pathCol = parseInt(col);
-        if(pathRow > 7){
+        if(pathRow > 7) {
             break;
         }
         gbPath = gameBoard.board[pathRow][pathCol];
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
-        if(gbPath.name !== peaces.empty){
+        if(gbPath.name !== peaces.empty) {
             break;
         }
     }
-    for (var i = 1; i <= maxDistance; i++){
+    for (var i = 1; i <= maxDistance; i++) {
         pathRow = parseInt(row) - i;
         pathCol = parseInt(col);
         if(pathRow < 0){
             break;
         }
         gbPath = gameBoard.board[pathRow][pathCol];
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
-        if(gbPath.name !== peaces.empty){
+        if(gbPath.name !== peaces.empty) {
             break;
         }
     }
-    for (var i = 1; i <= maxDistance; i++){
+    for (var i = 1; i <= maxDistance; i++) {
         pathRow = parseInt(row);
         pathCol = parseInt(col) + i;
-        if(pathCol > 7){
+        if(pathCol > 7) {
             break;
         }
         gbPath = gameBoard.board[pathRow][pathCol];
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
-        if(gbPath.name !== peaces.empty){
+        if(gbPath.name !== peaces.empty) {
             break;
         }
     }
-    for (var i = 1; i <= maxDistance; i++){
+    for (var i = 1; i <= maxDistance; i++) {
         pathRow = parseInt(row);
         pathCol = parseInt(col) - i;
-        if(pathCol < 0){
+        if(pathCol < 0) {
             break;
         }
         gbPath = gameBoard.board[pathRow][pathCol];
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
-        if(gbPath.name !== peaces.empty){
+        if(gbPath.name !== peaces.empty) {
             break;
         }
     }
     return path;
 }
 
-function getPathKnight(row,col){
+function getPathKnight(row, col) {
     var pathRow,
         pathCol,
         gbPath,
@@ -169,16 +171,16 @@ function getPathKnight(row,col){
     pathCol = parseInt(col) + 1;
     if (pathRow <= 7 && pathCol <= 7){
         gbPath = gameBoard.board[pathRow][pathCol];        
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
     }
 
     pathCol = parseInt(col) -1;
-    if (pathRow <= 7 && pathCol >= 0){
+    if (pathRow <= 7 && pathCol >= 0) {
         gbPath = gameBoard.board[pathRow][pathCol];        
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
@@ -186,18 +188,18 @@ function getPathKnight(row,col){
     
     pathRow = parseInt(row) -2;
     pathCol = parseInt(col) + 1;
-    if (pathRow >= 0 && pathCol <= 7){
+    if (pathRow >= 0 && pathCol <= 7) {
         gbPath = gameBoard.board[pathRow][pathCol];        
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
     }
 
     pathCol = parseInt(col) -1;
-    if (pathRow >= 0 && pathCol >= 0 ){
+    if (pathRow >= 0 && pathCol >= 0 ) {
         gbPath = gameBoard.board[pathRow][pathCol];        
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
@@ -205,18 +207,18 @@ function getPathKnight(row,col){
     
     pathCol = parseInt(col) + 2;
     pathRow = parseInt(row) + 1;
-    if (pathRow <= 7 && pathCol <= 7 ){
+    if (pathRow <= 7 && pathCol <= 7 ) {
         gbPath = gameBoard.board[pathRow][pathCol];        
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
     }
 
     pathRow = parseInt(row) - 1;
-    if (pathRow >= 0 && pathCol <= 7 ){
+    if (pathRow >= 0 && pathCol <= 7 ) {
         gbPath = gameBoard.board[pathRow][pathCol];        
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
@@ -224,18 +226,18 @@ function getPathKnight(row,col){
 
     pathCol = parseInt(col) - 2;
     pathRow = parseInt(row) + 1;
-    if (pathRow <= 7 && pathCol >= 0 ){
+    if (pathRow <= 7 && pathCol >= 0 ) {
         gbPath = gameBoard.board[pathRow][pathCol];        
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
     }
 
     pathRow = parseInt(row) - 1;
-    if (pathRow >= 0 && pathCol >= 0 ){
+    if (pathRow >= 0 && pathCol >= 0 ) {
         gbPath = gameBoard.board[pathRow][pathCol];        
-        if(gbPath.color !== gameBoard.turn){
+        if(gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
@@ -243,96 +245,96 @@ function getPathKnight(row,col){
     return path;
 }
 
-function getPathBishop(row,col,maxDistance){
+function getPathBishop(row, col, maxDistance) {
     var pathRow,
         pathCol,
         pathIndex = 0,
         gbPath,
         path = [];    
-    for(var i = 1; i <= maxDistance; i++){
+    for(var i = 1; i <= maxDistance; i++) {
         pathCol = parseInt(col) + i;
         pathRow = parseInt(row) + i;
-        if(pathCol > 7 || pathRow > 7){
+        if(pathCol > 7 || pathRow > 7) {
             break;
         }
         gbPath = gameBoard.board[pathRow][pathCol];
-        if (gbPath.color !== gameBoard.turn){
+        if (gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
-        if(gbPath.name !== peaces.empty){
+        if(gbPath.name !== peaces.empty) {
             break;
         }
     }
-    for(var i = 1; i <= maxDistance; i++){
+    for(var i = 1; i <= maxDistance; i++) {
         pathCol = parseInt(col) - i;
         pathRow = parseInt(row) + i;
-        if(pathCol < 0 || pathRow > 7){
+        if(pathCol < 0 || pathRow > 7) {
             break;
         }
         gbPath = gameBoard.board[pathRow][pathCol];
-        if (gbPath.color !== gameBoard.turn){
+        if (gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
-        if(gbPath.name !== peaces.empty){
+        if(gbPath.name !== peaces.empty) {
             break;
         }
     }
-    for(var i = 1; i <= maxDistance; i++){
+    for(var i = 1; i <= maxDistance; i++) {
         pathCol = parseInt(col) + i;
         pathRow = parseInt(row) - i;
         if(pathCol > 7 || pathRow < 0){
             break;
         }
         gbPath = gameBoard.board[pathRow][pathCol];
-        if (gbPath.color !== gameBoard.turn){
+        if (gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
-        if(gbPath.name !== peaces.empty){
+        if(gbPath.name !== peaces.empty) {
             break;
         }
     }
-    for(var i = 1; i <= maxDistance; i++){
+    for(var i = 1; i <= maxDistance; i++) {
         pathCol = parseInt(col) - i;
         pathRow = parseInt(row) - i;
-        if(pathCol < 0 || pathRow < 0){
+        if(pathCol < 0 || pathRow < 0) {
             break;
         }
         gbPath = gameBoard.board[pathRow][pathCol];
-        if (gbPath.color !== gameBoard.turn){
+        if (gbPath.color !== gameBoard.turn) {
             path[pathIndex] = {row: pathRow, col: pathCol};
             pathIndex++;
         }
-        if(gbPath.name !== peaces.empty){
+        if(gbPath.name !== peaces.empty) {
             break;
         }
     }
     return path;
 }
 
-function getPathQueen(row,col,maxDistance){
+function getPathQueen(row, col, maxDistance) {
     return Array.prototype.concat(getPathBishop(row,col,maxDistance),getPathRook(row,col,maxDistance));
 }
 
-function getPathKing(row,col,maxDistance){
+function getPathKing(row, col, maxDistance) {
     return getPathQueen(row,col,maxDistance);
 }
 
-function toggleSelect(row , col){
+function toggleSelect(row, col) {
     var peace = gameBoard.board[row][col];
 
-    if (selectedPeace.isSelected){
+    if (selectedPeace.isSelected) {
         gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
         updatePeaceHTML(selectedPeace.row,selectedPeace.col);
     };
-    if(selectedPeace.row == row && selectedPeace.col == col){
+    if(selectedPeace.row == row && selectedPeace.col == col) {
         selectedPeace.row = '';
         selectedPeace.col = '';
         selectedPeace.isSelected = false;        
         return;
-    }else{
+    } else {
         selectedPeace.row = row;
         selectedPeace.col = col;
         selectedPeace.isSelected = true;
@@ -343,7 +345,7 @@ function toggleSelect(row , col){
     return;
 }
 
-function toggleHighlight() {
+function toggleHighlight(path) {
     var highlightedIndex = 0;
     if(highlighted.length > 0){
         highlighted.forEach(x => {
@@ -351,7 +353,7 @@ function toggleHighlight() {
         });
         highlighted = [];
     };
-    if(!selectedPeace.isSelected){
+    if(!selectedPeace.isSelected) {
         return;
     }
     path.forEach(x => {
@@ -360,9 +362,9 @@ function toggleHighlight() {
         highlightedIndex++;
     })
     return;
-};
+}
 
-function initPeace(name , color , row , col){
+function initPeace(name, color, row, col) {
     var newPeace = {
         name : name,
         color : color,
@@ -375,24 +377,24 @@ function initPeace(name , color , row , col){
             },
         HTML: ''
     };
-    if( newPeace.name === peaces.empty){
+    if( newPeace.name === peaces.empty) {
         newPeace.HTML = '';
-    }else{
+    } else {
         newPeace.HTML = '<i class="fas fa-chess-' + newPeace.name + ' ' + newPeace.color + ' ' + newPeace.selected + ' ' + newPeace.highlighted + '"></i>';
     }
     return newPeace;
-};
+}
 
-function updatePeaceHTML(row,col){
+function updatePeaceHTML(row, col) {
     var peace = gameBoard.board[row][col];
     peace.HTML = '<i class="fas fa-chess-' + peace.name + ' ' + peace.color + ' ' + peace.selected + ' ' + peace.highlighted + '"></i>';
 }
 
-function initBoard(){
+function initBoard() {
     gameBoard.turn = colors.white;
     gameBoard.state = states.start;
 
-    for(var i = 0; i < gameBoard.board.length; i++){
+    for(var i = 0; i < gameBoard.board.length; i++) {
         gameBoard.board[1][i] = initPeace(peaces.pawn,colors.white,1,i);
         gameBoard.board[6][i] = initPeace(peaces.pawn,colors.black,6,i);
 
@@ -420,18 +422,18 @@ function initBoard(){
     gameBoard.board[7][4] = initPeace(peaces.king,colors.black,7,4);
 }
 
-function move(){
+function move() {
     var col = this.attributes['col-index'].value,
         row = this.parentNode.attributes['row-index'].value; 
     gameBoard.board[row][col].name = gameBoard.board[selectedPeace.row][selectedPeace.col].name;
     gameBoard.board[row][col].color = gameBoard.board[selectedPeace.row][selectedPeace.col].color;
     gameBoard.board[row][col].moved = true;
-    if( (row == 7 || row == 0) && gameBoard.board[selectedPeace.row][selectedPeace.col].name == peaces.pawn){
+    if( (row == 7 || row == 0) && gameBoard.board[selectedPeace.row][selectedPeace.col].name == peaces.pawn) {
         gameBoard.board[row][col].name = promotion();
     }
     updatePeaceHTML(row,col);
         
-    if(highlighted.length > 0){
+    if(highlighted.length > 0) {
         highlighted.forEach(x => {
             gameBoard.board[x.row][x.col].highlighted = '';
         });
@@ -449,21 +451,22 @@ function move(){
     renderBoard();
 }
 
-function promotion(){
+function promotion() {
+    
     return peaces.queen;
 }
 
-function toggleTurn(){
+function toggleTurn() {
     gameBoard.turn = (gameBoard.turn === colors.white) ? colors.black : colors.white;
 }
 
-function renderBoard(){
+function renderBoard() {
     var HTML = '';
     removeEventListeners(document.querySelectorAll('.game-board .row > div > i'),"click",displayMoves);
     removeEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);   
     for(var i = 0; i < gameBoard.board.length; i++){
         HTML += '<div class="row" row-index="' + i + '">';
-        for(var j = 0; j < gameBoard.board[i].length; j++){
+        for(var j = 0; j < gameBoard.board[i].length; j++) {
             HTML += '<div col-index="' + j + '" class="'+ gameBoard.board[i][j].highlighted +'">';
             HTML += gameBoard.board[i][j].HTML;
             HTML += '</div>';
