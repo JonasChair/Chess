@@ -9,8 +9,8 @@ function removeEventListeners(data, type, funct) {
 }
 
 function displayMoves() {
-    var col = this.parentNode.attributes['col-index'].value,
-        row = this.parentNode.parentNode.attributes['row-index'].value;
+    var col = this.attributes['col-index'].value,
+        row = this.parentNode.attributes['row-index'].value;
     
     if (gameBoard.board[row][col].color === gameBoard.turn) {
         toggleSelect(row,col);
@@ -424,13 +424,10 @@ function initBoard() {
 
 function move() {
     var col = this.attributes['col-index'].value,
-        row = this.parentNode.attributes['row-index'].value; 
+        row = this.parentNode.attributes['row-index'].value;
     gameBoard.board[row][col].name = gameBoard.board[selectedPeace.row][selectedPeace.col].name;
     gameBoard.board[row][col].color = gameBoard.board[selectedPeace.row][selectedPeace.col].color;
     gameBoard.board[row][col].moved = true;
-    if( (row == 7 || row == 0) && gameBoard.board[selectedPeace.row][selectedPeace.col].name == peaces.pawn) {
-        gameBoard.board[row][col].name = promotion();
-    }
     updatePeaceHTML(row,col);
         
     if(highlighted.length > 0) {
@@ -446,14 +443,29 @@ function move() {
     updatePeaceHTML(selectedPeace.row,selectedPeace.col);
     selectedPeace.row = '';
     selectedPeace.col = '';
-    selectedPeace.isSelected = false;           
+    selectedPeace.isSelected = false;
+    if( (row == 7 || row == 0) && gameBoard.board[row][col].name === peaces.pawn) {
+        gameBoard.state = states.promotion;
+        promoted.row = row;
+        promoted.col = col;
+        renderBoard();
+        return;
+    } 
     toggleTurn();
     renderBoard();
 }
 
-function promotion() {
-    
-    return peaces.queen;
+function promote() {
+    gameBoard.board[promoted.row][promoted.col].name = this.children[0].classList[1].split("-")[2];
+    document.querySelector('.promotion').classList.remove("display");
+    document.querySelectorAll('.promotion i').forEach(x => x.classList.remove(gameBoard.turn));
+    removeEventListeners(document.querySelectorAll('.promotion .div'),'click',promote);
+    updatePeaceHTML(promoted.row,promoted.col);
+    gameBoard.state = states.inProgress;
+    promoted.row = -1;
+    promoted.col = -1;
+    toggleTurn();
+    renderBoard();
 }
 
 function toggleTurn() {
@@ -462,8 +474,8 @@ function toggleTurn() {
 
 function renderBoard() {
     var HTML = '';
-    removeEventListeners(document.querySelectorAll('.game-board .row > div > i'),"click",displayMoves);
-    removeEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);   
+    removeEventListeners(document.querySelectorAll('.game-board .row > div'),"click",displayMoves);
+    removeEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
     for(var i = 0; i < gameBoard.board.length; i++){
         HTML += '<div class="row" row-index="' + i + '">';
         for(var j = 0; j < gameBoard.board[i].length; j++) {
@@ -474,7 +486,13 @@ function renderBoard() {
         HTML += '</div>';
     }
     document.querySelector('.game-board').innerHTML = HTML;
-    addEventListeners(document.querySelectorAll('.game-board .row > div > i'),"click",displayMoves);
+    if(gameBoard.state == states.promotion){
+        document.querySelector('.promotion').classList.add("display");
+        document.querySelectorAll('.promotion i').forEach(x => x.classList.add(gameBoard.turn));
+        addEventListeners(document.querySelectorAll('.promotion div'),'click',promote);
+    }
+    addEventListeners(document.querySelectorAll('.game-board .row > div'),"click",displayMoves);
     addEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
+    
     return;
 }
