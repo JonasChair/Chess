@@ -30,6 +30,8 @@ var selectedPeace = {
 };
 var highlighted = [];
 
+var path = [];
+
 var gameBoard = {
     turn: 'white',
     state: 'start',
