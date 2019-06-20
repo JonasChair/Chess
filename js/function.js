@@ -490,6 +490,7 @@ function renderBoard() {
         document.querySelector('.promotion').classList.add("display");
         document.querySelectorAll('.promotion i').forEach(x => x.classList.add(gameBoard.turn));
         addEventListeners(document.querySelectorAll('.promotion div'),'click',promote);
+        return;
     }
     addEventListeners(document.querySelectorAll('.game-board .row > div'),"click",displayMoves);
     addEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
