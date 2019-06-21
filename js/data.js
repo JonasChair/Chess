@@ -3,6 +3,7 @@
 var states = {
     start: 'start',
     inProgress: 'in progress',
+    promotion: 'promotion',
     draw: 'draw',
     blackWin: 'blackWin',
     whiteWin: 'whiteWin'
@@ -31,10 +32,16 @@ var selectedPeace = {
         col: '',
         isSelected: false
 }
+var promoted = {
+        row: -1,
+        col: -1
+}
 
 var highlighted = [];
 
 var path = [];
+
+var castle = [];
 
 var gameBoard = {
     turn: 'white',

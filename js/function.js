@@ -8,9 +8,9 @@ function removeEventListeners(data, type, funct) {
     data.forEach(x => x.removeEventListener(type,funct));
 }
 
-function displayMoves() {
-    var col = this.parentNode.attributes['col-index'].value,
-        row = this.parentNode.parentNode.attributes['row-index'].value;
+function displayMoves() {    
+    var col = this.attributes['col-index'].value,
+        row = this.parentNode.attributes['row-index'].value;
     
     if (gameBoard.board[row][col].color === gameBoard.turn) {
         toggleSelect(row,col);
@@ -24,36 +24,38 @@ function getPath(row, col) {
     var peace = gameBoard.board[row][col],
         maxDistance;
         path = [];
-
-    switch (peace.name) {
-        case peaces.pawn:
-            if(!peace.moved) {
-                maxDistance = 2;
-            } else {
+        castle = [];
+    if(selectedPeace.isSelected){
+        switch (peace.name) {
+            case peaces.pawn:
+                if(!peace.moved) {
+                    maxDistance = 2;
+                } else {
+                    maxDistance = 1;
+                }
+                path = getPathPawn(row,col,maxDistance);
+            break;
+            case peaces.rook:
+                maxDistance = 7;
+                path = getPathRook(row,col,maxDistance);
+            break;
+            case peaces.knight:
+                path = getPathKnight(row,col);
+            break;
+            case peaces.bishop:
+                maxDistance = 7;
+                path = getPathBishop(row,col,maxDistance);
+            break;
+            case peaces.queen:
+                maxDistance = 7;
+                path = getPathQueen(row,col,maxDistance);
+            break;
+            case peaces.king:
                 maxDistance = 1;
-            }
-            path = getPathPawn(row,col,maxDistance);
-        break;
-        case peaces.rook:
-            maxDistance = 7;
-            path = getPathRook(row,col,maxDistance);
-        break;
-        case peaces.knight:
-            path = getPathKnight(row,col);
-        break;
-        case peaces.bishop:
-            maxDistance = 7;
-            path = getPathBishop(row,col,maxDistance);
-        break;
-        case peaces.queen:
-            maxDistance = 7;
-            path = getPathQueen(row,col,maxDistance);
-        break;
-        case peaces.king:
-            maxDistance = 1;
-            path = getPathKing(row,col,maxDistance);
-        break;
-        default:
+                path = getPathKing(row,col,maxDistance);
+            break;
+            default:
+        }
     }
     return path;
 }
@@ -319,7 +321,32 @@ function getPathQueen(row, col, maxDistance) {
 }
 
 function getPathKing(row, col, maxDistance) {
-    return getPathQueen(row,col,maxDistance);
+    var path = getPathQueen(row,col,maxDistance);
+    if(!gameBoard.board[row][col].moved) {
+        switch(gameBoard.turn){
+        case colors.white:
+            if(gameBoard.board[0][0].name === peaces.rook && gameBoard.board[0][0].moved === false && getPathRook(0,0,7).findIndex(x => x.col === parseInt(col) - 1) !== -1){
+                path.push({row: parseInt(row), col: parseInt(col) - 2});
+                castle.push({row: parseInt(row), col: parseInt(col) - 2});             
+            }
+            if(gameBoard.board[0][7].name === peaces.rook && gameBoard.board[0][7].moved === false && getPathRook(0,7,7).findIndex(x => x.col === parseInt(col) + 1) !== -1){
+                path.push({row: parseInt(row), col: parseInt(col) + 2});
+                castle.push({row: parseInt(row), col: parseInt(col) + 2});         
+            }
+        break;
+        case colors.black:
+            if(gameBoard.board[7][0].name === peaces.rook && gameBoard.board[7][0].moved === false && getPathRook(7,0,7).findIndex(x => x.col === parseInt(col) - 1) !== -1){
+                path.push({row: parseInt(row), col: parseInt(col) - 2});
+                castle.push({row: parseInt(row), col: parseInt(col) - 2});                
+            }
+            if(gameBoard.board[7][7].name === peaces.rook && gameBoard.board[7][7].moved === false && getPathRook(7,7,7).findIndex(x => x.col === parseInt(col) + 1) !== -1){
+                path.push({row: parseInt(row), col: parseInt(col) + 2});
+                castle.push({row: parseInt(row), col: parseInt(col) + 2});         
+            }
+        break;
+        }
+    }
+    return path;
 }
 
 function toggleSelect(row, col) {
@@ -424,36 +451,73 @@ function initBoard() {
 
 function move() {
     var col = this.attributes['col-index'].value,
-        row = this.parentNode.attributes['row-index'].value; 
+        row = this.parentNode.attributes['row-index'].value;
     gameBoard.board[row][col].name = gameBoard.board[selectedPeace.row][selectedPeace.col].name;
     gameBoard.board[row][col].color = gameBoard.board[selectedPeace.row][selectedPeace.col].color;
     gameBoard.board[row][col].moved = true;
-    if( (row == 7 || row == 0) && gameBoard.board[selectedPeace.row][selectedPeace.col].name == peaces.pawn) {
-        gameBoard.board[row][col].name = promotion();
-    }
     updatePeaceHTML(row,col);
         
     if(highlighted.length > 0) {
         highlighted.forEach(x => {
             gameBoard.board[x.row][x.col].highlighted = '';
         });
-    };
-    
+    }
     gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
     gameBoard.board[selectedPeace.row][selectedPeace.col].name = peaces.empty;
     gameBoard.board[selectedPeace.row][selectedPeace.col].color = colors.none;
     gameBoard.board[selectedPeace.row][selectedPeace.col].moved = true;
     updatePeaceHTML(selectedPeace.row,selectedPeace.col);
+
+    if(castle.findIndex(x => x.col === parseInt(col)) != -1){
+        switch(col){
+            case "6":
+                gameBoard.board[row][5].name = gameBoard.board[row][7].name;
+                gameBoard.board[row][5].color = gameBoard.board[row][7].color;
+                gameBoard.board[row][5].moved = true;
+                updatePeaceHTML(row,5);
+                gameBoard.board[row][7].name = peaces.empty;
+                gameBoard.board[row][7].color = colors.none;
+                gameBoard.board[row][7].moved = true;
+                updatePeaceHTML(row,7);
+            break;
+            case "2":
+                gameBoard.board[row][3].name = gameBoard.board[row][0].name;
+                gameBoard.board[row][3].color = gameBoard.board[row][0].color;
+                gameBoard.board[row][3].moved = true;
+                updatePeaceHTML(row,3);
+                gameBoard.board[row][0].name = peaces.empty;
+                gameBoard.board[row][0].color = colors.none;
+                gameBoard.board[row][0].moved = true;
+                updatePeaceHTML(row,0);
+            break;
+        }
+        castle = [];
+    }
     selectedPeace.row = '';
     selectedPeace.col = '';
-    selectedPeace.isSelected = false;           
+    selectedPeace.isSelected = false;
+    if( (row == 7 || row == 0) && gameBoard.board[row][col].name === peaces.pawn) {
+        gameBoard.state = states.promotion;
+        promoted.row = row;
+        promoted.col = col;
+        renderBoard();
+        return;
+    } 
     toggleTurn();
     renderBoard();
 }
 
-function promotion() {
-    
-    return peaces.queen;
+function promote() {
+    gameBoard.board[promoted.row][promoted.col].name = this.children[0].classList[1].split("-")[2];
+    document.querySelector('.promotion').classList.remove("display");
+    document.querySelectorAll('.promotion i').forEach(x => x.classList.remove(gameBoard.turn));
+    removeEventListeners(document.querySelectorAll('.promotion .div'),'click',promote);
+    updatePeaceHTML(promoted.row,promoted.col);
+    gameBoard.state = states.inProgress;
+    promoted.row = -1;
+    promoted.col = -1;
+    toggleTurn();
+    renderBoard();
 }
 
 function toggleTurn() {
@@ -462,8 +526,8 @@ function toggleTurn() {
 
 function renderBoard() {
     var HTML = '';
-    removeEventListeners(document.querySelectorAll('.game-board .row > div > i'),"click",displayMoves);
-    removeEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);   
+    removeEventListeners(document.querySelectorAll('.game-board .row > div'),"click",displayMoves);
+    removeEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
     for(var i = 0; i < gameBoard.board.length; i++){
         HTML += '<div class="row" row-index="' + i + '">';
         for(var j = 0; j < gameBoard.board[i].length; j++) {
@@ -474,7 +538,14 @@ function renderBoard() {
         HTML += '</div>';
     }
     document.querySelector('.game-board').innerHTML = HTML;
-    addEventListeners(document.querySelectorAll('.game-board .row > div > i'),"click",displayMoves);
+    if(gameBoard.state == states.promotion) {
+        document.querySelector('.promotion').classList.add("display");
+        document.querySelectorAll('.promotion i').forEach(x => x.classList.add(gameBoard.turn));
+        addEventListeners(document.querySelectorAll('.promotion div'),'click',promote);
+        return;
+    }
+    addEventListeners(document.querySelectorAll('.game-board .row > div'),"click",displayMoves);
     addEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
+    
     return;
 }
