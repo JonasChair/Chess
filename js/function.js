@@ -8,7 +8,7 @@ function removeEventListeners(data, type, funct) {
     data.forEach(x => x.removeEventListener(type,funct));
 }
 
-function displayMoves() {
+function displayMoves() {    
     var col = this.attributes['col-index'].value,
         row = this.parentNode.attributes['row-index'].value;
     
@@ -24,36 +24,38 @@ function getPath(row, col) {
     var peace = gameBoard.board[row][col],
         maxDistance;
         path = [];
-
-    switch (peace.name) {
-        case peaces.pawn:
-            if(!peace.moved) {
-                maxDistance = 2;
-            } else {
+        castle = [];
+    if(selectedPeace.isSelected){
+        switch (peace.name) {
+            case peaces.pawn:
+                if(!peace.moved) {
+                    maxDistance = 2;
+                } else {
+                    maxDistance = 1;
+                }
+                path = getPathPawn(row,col,maxDistance);
+            break;
+            case peaces.rook:
+                maxDistance = 7;
+                path = getPathRook(row,col,maxDistance);
+            break;
+            case peaces.knight:
+                path = getPathKnight(row,col);
+            break;
+            case peaces.bishop:
+                maxDistance = 7;
+                path = getPathBishop(row,col,maxDistance);
+            break;
+            case peaces.queen:
+                maxDistance = 7;
+                path = getPathQueen(row,col,maxDistance);
+            break;
+            case peaces.king:
                 maxDistance = 1;
-            }
-            path = getPathPawn(row,col,maxDistance);
-        break;
-        case peaces.rook:
-            maxDistance = 7;
-            path = getPathRook(row,col,maxDistance);
-        break;
-        case peaces.knight:
-            path = getPathKnight(row,col);
-        break;
-        case peaces.bishop:
-            maxDistance = 7;
-            path = getPathBishop(row,col,maxDistance);
-        break;
-        case peaces.queen:
-            maxDistance = 7;
-            path = getPathQueen(row,col,maxDistance);
-        break;
-        case peaces.king:
-            maxDistance = 1;
-            path = getPathKing(row,col,maxDistance);
-        break;
-        default:
+                path = getPathKing(row,col,maxDistance);
+            break;
+            default:
+        }
     }
     return path;
 }
@@ -319,7 +321,32 @@ function getPathQueen(row, col, maxDistance) {
 }
 
 function getPathKing(row, col, maxDistance) {
-    return getPathQueen(row,col,maxDistance);
+    var path = getPathQueen(row,col,maxDistance);
+    if(!gameBoard.board[row][col].moved) {
+        switch(gameBoard.turn){
+        case colors.white:
+            if(gameBoard.board[0][0].name === peaces.rook && gameBoard.board[0][0].moved === false && getPathRook(0,0,7).findIndex(x => x.col === parseInt(col) - 1) !== -1){
+                path.push({row: parseInt(row), col: parseInt(col) - 2});
+                castle.push({row: parseInt(row), col: parseInt(col) - 2});             
+            }
+            if(gameBoard.board[0][7].name === peaces.rook && gameBoard.board[0][7].moved === false && getPathRook(0,7,7).findIndex(x => x.col === parseInt(col) + 1) !== -1){
+                path.push({row: parseInt(row), col: parseInt(col) + 2});
+                castle.push({row: parseInt(row), col: parseInt(col) + 2});         
+            }
+        break;
+        case colors.black:
+            if(gameBoard.board[7][0].name === peaces.rook && gameBoard.board[7][0].moved === false && getPathRook(7,0,7).findIndex(x => x.col === parseInt(col) - 1) !== -1){
+                path.push({row: parseInt(row), col: parseInt(col) - 2});
+                castle.push({row: parseInt(row), col: parseInt(col) - 2});                
+            }
+            if(gameBoard.board[7][7].name === peaces.rook && gameBoard.board[7][7].moved === false && getPathRook(7,7,7).findIndex(x => x.col === parseInt(col) + 1) !== -1){
+                path.push({row: parseInt(row), col: parseInt(col) + 2});
+                castle.push({row: parseInt(row), col: parseInt(col) + 2});         
+            }
+        break;
+        }
+    }
+    return path;
 }
 
 function toggleSelect(row, col) {
@@ -434,13 +461,38 @@ function move() {
         highlighted.forEach(x => {
             gameBoard.board[x.row][x.col].highlighted = '';
         });
-    };
-    
+    }
     gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
     gameBoard.board[selectedPeace.row][selectedPeace.col].name = peaces.empty;
     gameBoard.board[selectedPeace.row][selectedPeace.col].color = colors.none;
     gameBoard.board[selectedPeace.row][selectedPeace.col].moved = true;
     updatePeaceHTML(selectedPeace.row,selectedPeace.col);
+
+    if(castle.findIndex(x => x.col === parseInt(col)) != -1){
+        switch(col){
+            case "6":
+                gameBoard.board[row][5].name = gameBoard.board[row][7].name;
+                gameBoard.board[row][5].color = gameBoard.board[row][7].color;
+                gameBoard.board[row][5].moved = true;
+                updatePeaceHTML(row,5);
+                gameBoard.board[row][7].name = peaces.empty;
+                gameBoard.board[row][7].color = colors.none;
+                gameBoard.board[row][7].moved = true;
+                updatePeaceHTML(row,7);
+            break;
+            case "2":
+                gameBoard.board[row][3].name = gameBoard.board[row][0].name;
+                gameBoard.board[row][3].color = gameBoard.board[row][0].color;
+                gameBoard.board[row][3].moved = true;
+                updatePeaceHTML(row,3);
+                gameBoard.board[row][0].name = peaces.empty;
+                gameBoard.board[row][0].color = colors.none;
+                gameBoard.board[row][0].moved = true;
+                updatePeaceHTML(row,0);
+            break;
+        }
+        castle = [];
+    }
     selectedPeace.row = '';
     selectedPeace.col = '';
     selectedPeace.isSelected = false;
@@ -486,7 +538,7 @@ function renderBoard() {
         HTML += '</div>';
     }
     document.querySelector('.game-board').innerHTML = HTML;
-    if(gameBoard.state == states.promotion){
+    if(gameBoard.state == states.promotion) {
         document.querySelector('.promotion').classList.add("display");
         document.querySelectorAll('.promotion i').forEach(x => x.classList.add(gameBoard.turn));
         addEventListeners(document.querySelectorAll('.promotion div'),'click',promote);

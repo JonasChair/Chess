@@ -35,11 +35,13 @@ var selectedPeace = {
 var promoted = {
         row: -1,
         col: -1
-};
+}
 
 var highlighted = [];
 
 var path = [];
+
+var castle = [];
 
 var gameBoard = {
     turn: 'white',
