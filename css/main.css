@@ -99,6 +99,7 @@ body{
             }
 
         .game-board div {
+            position: relative;
             text-align: center;
             z-index: -1;
         }
@@ -134,7 +135,7 @@ body{
     grid-area: info;
 }
 
-.promotion {
+#promotion {
     display: none;
     position: absolute;
     width: 100px;
@@ -142,28 +143,31 @@ body{
     border-radius: 10px;
     box-shadow: 0 1px 4px gray;
     text-align: center;
+    z-index: -3;
+    bottom:-100px;
+    right:-50px;
 }
-    .promotion.display {
+    #promotion.display {
         display: inline-block;
     }
 
-    .promotion > div {
+    #promotion > div {
         display: inline-block;
         float: left;
         height: 50px;
         width: 50px;
     }
 
-    .promotion > div > i {
+    #promotion > div > i {
         line-height: 50px;
         font-size: 40px;
     }
     
-    .promotion > div > i.white {
+    #promotion > div > i.white {
             color: white;
             text-shadow: 2px 2px 8px black;
         }
     
-    .promotion > div:hover > i {
+    #promotion > div:hover > i {
         text-shadow: 5px 2px 8px green;
     }
