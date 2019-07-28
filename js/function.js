@@ -500,6 +500,21 @@ function move() {
         gameBoard.state = states.promotion;
         promoted.row = row;
         promoted.col = col;
+        var peace = gameBoard.board[row][col];
+        peace.HTML += '<div id="promotion">\
+                        <div>\
+                            <i class="fas fa-chess-queen"></i>\
+                        </div>\
+                        <div>\
+                            <i class="fas fa-chess-rook"></i>\
+                        </div>\
+                        <div>\
+                            <i class="fas fa-chess-bishop"></i>\
+                        </div>\
+                        <div>\
+                            <i class="fas fa-chess-knight"></i>\
+                        </div>\
+                    </div>';
         renderBoard();
         return;
     } 
@@ -509,9 +524,9 @@ function move() {
 
 function promote() {
     gameBoard.board[promoted.row][promoted.col].name = this.children[0].classList[1].split("-")[2];
-    document.querySelector('.promotion').classList.remove("display");
-    document.querySelectorAll('.promotion i').forEach(x => x.classList.remove(gameBoard.turn));
-    removeEventListeners(document.querySelectorAll('.promotion .div'),'click',promote);
+    document.querySelector('#promotion').classList.remove("display");
+    document.querySelectorAll('#promotion i').forEach(x => x.classList.remove(gameBoard.turn));
+    removeEventListeners(document.querySelectorAll('#promotion .div'),'click',promote);
     updatePeaceHTML(promoted.row,promoted.col);
     gameBoard.state = states.inProgress;
     promoted.row = -1;
@@ -526,7 +541,7 @@ function toggleTurn() {
 
 function renderBoard() {
     var HTML = '';
-    removeEventListeners(document.querySelectorAll('.game-board .row > div'),"click",displayMoves);
+    removeEventListeners(document.querySelectorAll('.game-board .row > div'),'click',displayMoves);
     removeEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
     for(var i = 0; i < gameBoard.board.length; i++){
         HTML += '<div class="row" row-index="' + i + '">';
@@ -539,12 +554,12 @@ function renderBoard() {
     }
     document.querySelector('.game-board').innerHTML = HTML;
     if(gameBoard.state == states.promotion) {
-        document.querySelector('.promotion').classList.add("display");
-        document.querySelectorAll('.promotion i').forEach(x => x.classList.add(gameBoard.turn));
-        addEventListeners(document.querySelectorAll('.promotion div'),'click',promote);
+        document.querySelector('#promotion').classList.add('display');
+        document.querySelectorAll('#promotion i').forEach(x => x.classList.add(gameBoard.turn));
+        addEventListeners(document.querySelectorAll('#promotion div'),'click',promote);
         return;
     }
-    addEventListeners(document.querySelectorAll('.game-board .row > div'),"click",displayMoves);
+    addEventListeners(document.querySelectorAll('.game-board .row > div'),'click',displayMoves);
     addEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
     
     return;
