@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chess 0.1</title>
-    <link rel="stylesheet" href="css/all.min.css">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href=<?= url('css/all.min.css')?>>
+    <link rel="stylesheet" href=<?= url('css/main.css')?>>
 </head>
 <body>
     <div class="game">
@@ -58,9 +58,8 @@
             
         </section>
     </div>
-    
 </body>
-<script src="js/data.js"></script>
-<script src="js/function.js"></script>
-<script src="js/actions.js"></script>
+<script src=<?= url('js/data.js')?>></script>
+<script src=<?= url('js/function.js')?>></script>
+<script src=<?= url('js/actions.js')?>></script>
 </html>
