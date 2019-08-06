@@ -450,18 +450,28 @@ function initBoard() {
 }
 
 function move() {
+    console.log(selectedPeace);
     var col = this.attributes['col-index'].value,
         row = this.parentNode.attributes['row-index'].value;
-    gameBoard.board[row][col].name = gameBoard.board[selectedPeace.row][selectedPeace.col].name;
-    gameBoard.board[row][col].color = gameBoard.board[selectedPeace.row][selectedPeace.col].color;
-    gameBoard.board[row][col].moved = true;
-    updatePeaceHTML(row,col);
-        
+    axios.post('http://localhost/chess/front_public/api/move',{
+        move_start: {row: selectedPeace.row, col: selectedPeace.col},
+        move_end: {row: row, col: col}
+        })
+        .then(function (response) {
+        console.log(response.data);
+        })
+        .catch(function (error) {
+        console.log(error);
+    });
     if(highlighted.length > 0) {
         highlighted.forEach(x => {
             gameBoard.board[x.row][x.col].highlighted = '';
         });
     }
+    gameBoard.board[row][col].name = gameBoard.board[selectedPeace.row][selectedPeace.col].name;
+    gameBoard.board[row][col].color = gameBoard.board[selectedPeace.row][selectedPeace.col].color;
+    gameBoard.board[row][col].moved = true;
+    updatePeaceHTML(row,col);
     gameBoard.board[selectedPeace.row][selectedPeace.col].selected = '';
     gameBoard.board[selectedPeace.row][selectedPeace.col].name = peaces.empty;
     gameBoard.board[selectedPeace.row][selectedPeace.col].color = colors.none;

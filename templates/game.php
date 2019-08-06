@@ -59,6 +59,7 @@
         </section>
     </div>
 </body>
+<script src=<?= url('js/axios.min.js')?>></script>
 <script src=<?= url('js/data.js')?>></script>
 <script src=<?= url('js/function.js')?>></script>
 <script src=<?= url('js/actions.js')?>></script>

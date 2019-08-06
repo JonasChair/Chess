@@ -2,18 +2,20 @@
 
 namespace chess;
 
-interface Api {
-    function parse_request(String $request) : Array;
+class Api implements ApiInterface{
+    function parse_request(String $request) : Array{
+        return explode('/',$request);
+    }
 
-    function call_func(Array $parsed_request);
-
-    function move(\stdClass $move);
-
-    function new_game(\stdClass $game_info);
-
-    function end_game(\stdClass $game_info);
-
-    function get_history(\stdClass $user_info);
-
-    function new_user(\stdClass $user_info);
+    function call_func(Array $parsed_request){
+        switch($parsed_request[0]){
+            case 'move':
+                self::move(json_decode(file_get_contents("php://input")));
+                break;
+        }
+    }
+    static function move($parsed_request){
+        
+        echo json_encode($parsed_request);
+    }
 }
