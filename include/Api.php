@@ -15,7 +15,6 @@ class Api implements ApiInterface{
         }
     }
     static function move($parsed_request){
-        
         echo json_encode($parsed_request);
     }
 }

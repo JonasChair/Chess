@@ -450,12 +450,12 @@ function initBoard() {
 }
 
 function move() {
-    console.log(selectedPeace);
     var col = this.attributes['col-index'].value,
         row = this.parentNode.attributes['row-index'].value;
     axios.post('http://localhost/chess/front_public/api/move',{
-        move_start: {row: selectedPeace.row, col: selectedPeace.col},
-        move_end: {row: row, col: col}
+        ...selectedPeace
+        // move_start: {row: selectedPeace.row, col: selectedPeace.col},
+        // move_end: {row: row, col: col}
         })
         .then(function (response) {
         console.log(response.data);
