@@ -15,5 +15,5 @@ interface ApiInterface {
 
     // function get_history(\stdClass $user_info);
 
-    // function new_user(\stdClass $user_info);
+    function new_user(\stdClass $user_info);
 }

@@ -1,173 +1,127 @@
-body,
-body *{
-    margin: 0;
-    padding: 0;
+body, body *{
+    margin:0;
+    padding:0;
     vertical-align: top;
     box-sizing: border-box;
 }
-
+body *{
+    display: inline-block;
+    outline: none;
+}
 body{
-    display: grid;
-    grid-template-areas: '. game .';
-    grid-template-columns: 1fr 900px 1fr;
-    grid-template-rows: 470px;
+    height: 100%;
 }
-
-.game {
-    display: grid;
-    grid-area: game;
-    grid-template-areas: "board info";
-    grid-template-columns: 1fr 1fr;
-    background-color: lightgray;
-}
-
-.board {
-    grid-area: board;
-    display: grid;
-    grid-template-areas: 
-        ".          south_coord ."
-        "west_coord game_board east_coord"
-        ".          north_coord .";
-    grid-template-columns: 20px 1fr 20px;
-    grid-template-rows: 20px 1fr 20px;
-}
-
-    .coord {
-        background-color: darkgrey;
-        display: grid;
-        text-align: center;
-    }
-
-        .coord.horizontal {
-            grid-template-columns: repeat(8,1fr);
-        }
-
-        .coord.vertical {
-            grid-template-rows: repeat(8,1fr);
-            line-height: 50px;     
-        }
-
-        .coord > div {
-            border: dotted 1px black;
-        }
-
-            .coord.south {
-                grid-area: south_coord;
-                transform: rotate(180deg);
-            }
-
-            .coord.north {
-                grid-area: north_coord;
-            }
-
-            .coord.west {
-                grid-area: west_coord;
-            }
-
-            .coord.east {
-                grid-area: east_coord;
-                transform: rotate(180deg);
-            }
-
-        .game-board {
-            grid-area: game_board;
-            display: grid;
-            grid-template-rows: repeat(8,1fr);
-            transform: rotate(180deg);
-        }
-
-        .game-board > .row {
-            display: grid;
-            grid-template-columns: repeat(8,1fr);
-            transform: rotate(180deg);
-        }
-
-            .game-board > .row:nth-of-type(2n) > div:nth-of-type(2n) {
-                background-color: white;
-            }
-
-            .game-board > .row:nth-of-type(2n-1) > div:nth-of-type(2n-1) {
-                background-color: white;
-            }
-
-            .game-board > .row:nth-of-type(2n-1) > div:nth-of-type(2n) {
-                background-color: darkgrey;
-            }
-
-            .game-board > .row:nth-of-type(2n) > div:nth-of-type(2n-1) {
-                background-color: darkgrey;
-            }
-
-        .game-board div {
-            position: relative;
-            text-align: center;
-            z-index: -1;
-        }
-
-        .game-board i {
-            line-height: 50px;
-            font-size: 40px;
-        }
-
-            .game-board i.selected  {
-                text-shadow: 5px 2px 8px green;
-            }
-
-        i.white {
-            color: white;
-            text-shadow: 2px 2px 8px black;
-        }
-
-        i.black {
-            text-shadow: 2px 2px 8px white;
-        }
-
-    .game-board div.highlighted{
-        outline: 3px solid blue;
-        outline-offset: -3px;
-    }
-
-        .game-board div.highlighted > i{
-            text-shadow: 5px 2px 8px red;
-        }
-
-.info {
-    grid-area: info;
-}
-
-#promotion {
-    display: none;
+.bg-image{
+    background-image: url(https://picsum.photos/1200/800);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: blur(4px);
+    height: 100vh;
+    width: 100vw;
     position: absolute;
-    width: 100px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 1px 4px gray;
-    text-align: center;
-    z-index: -3;
-    bottom:-100px;
-    right:-50px;
 }
-    #promotion.display {
-        display: inline-block;
+    body > main {
+        z-index: 2;
+        width: 800px;
+        margin-top: 60px;
+        margin-left: calc( (100% - 800px) / 2 );
+        position: relative;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     }
 
-    #promotion > div {
-        display: inline-block;
-        float: left;
-        height: 50px;
-        width: 50px;
-    }
-
-    #promotion > div > i {
-        line-height: 50px;
-        font-size: 40px;
-    }
-    
-    #promotion > div > i.white {
-            color: white;
-            text-shadow: 2px 2px 8px black;
+        main > .left {
+            position: absolute;
+            background: url(https://picsum.photos/1200/800);
+            float: left;
+            width: 40%;
+            top: 5%;
+            bottom: 5%;
+            padding: 30px 40px 10px;
+            color: #FFF;
         }
-    
-    #promotion > div:hover > i {
-        text-shadow: 5px 2px 8px green;
-    }
+            .left > h1 {
+                text-shadow: black 0px 0px 2px;
+                position: absolute;
+                float: left;
+                font-size: 40px;
+                font-weight: 100;
+            }
+            .left > p{
+                position:absolute;
+                float:left;
+                bottom: 20px;
+                text-shadow: black 0px 0px 1px;
+            }
+                .left > p > a{
+                    color: #FFF;
+                }
+
+        main > .right {
+            float: right;
+            width:60%;
+            padding:50px;
+            background-color: #FFF;
+            background-image: none;
+            color: #D2D2D2;
+            width: 60%;
+            margin-top: 0px;
+            border-radius: 2px;
+        }
+            .x {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                text-decoration: none;
+                color: blue;
+            }
+                .x:hover {
+                    cursor: pointer;
+                }
+
+            .form {
+                display: inline-block;
+                float: left;
+                width: 100%;
+                text-transform: uppercase;
+                color: #C0C0C0;       
+            }
+            .form > input{
+                display: inline-block;
+                float: left;
+                width: 100%;
+                height: 30px;
+                margin-bottom: 30px;
+                margin-top: 15px;
+                border: none;
+                border-bottom: 1px solid #C0C0C0;
+                padding-top: 5px;
+            }
+
+            .form > p {
+                display:inline-block;
+                width: 100%;
+                text-transform: none;
+            }
+
+            .form > p >  span {
+                padding-top: 7px;
+                padding-bottom: 7px;
+            }
+
+            a{
+                text-decoration: none;
+            }
+                .btn {
+                    color: white;
+                    background-color: #314DD2;
+                    border-radius: 24px;
+                    padding-left: 45px;
+                    padding-right: 45px;
+                    padding-top: 7px;
+                    padding-bottom: 7px;
+                    margin-right: 10px;
+                }
+                .btn:hover {
+                    cursor: pointer;
+                }
