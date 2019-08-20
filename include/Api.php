@@ -12,8 +12,12 @@ class Api implements ApiInterface{
             case 'move':
                 self::move(json_decode(file_get_contents("php://input")));
                 break;
-            case 'signUp':
+            case 'register':
                 self::new_user(json_decode(file_get_contents("php://input")));
+                break;
+            case 'login':
+                self::login(json_decode(file_get_contents("php://input")));
+                break;
         }
     }
 
@@ -32,5 +36,17 @@ class Api implements ApiInterface{
             'username' => $parsed_request->username
         ]);
         echo json_encode($parsed_request);
+    }
+
+    function login($parsed_request){
+        global $pdo;
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ? and password = ?');
+
+        $stmt->execute([
+            $parsed_request->email,
+            $parsed_request->password
+        ]);
+
+        $stmt->fetchAll()[0]['id'];
     }
 }

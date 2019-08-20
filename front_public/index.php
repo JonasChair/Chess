@@ -29,13 +29,14 @@ $file = preg_replace('/\?.+$/', '', $file);
 
 $bla = new chess\Api;
 
+
+if($file == ''){
+    require DIR.'templates/login.php';
+}
+
 if (preg_match('/^game/', $file)){
     $game_id = preg_replace('/^game/', '', $file);
     require DIR.'templates/game.php';
-}
-
-if(preg_match('/^login/', $file)){
-    require DIR.'templates/login.php';
 }
 
 if (preg_match('/^api/', $file)){

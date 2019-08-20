@@ -22,25 +22,24 @@
         </p>
     </div>
     <div class="right">
-        <div class="x">
-            X
-        </div>
         <form class="form">
-            <p>Username</p>
-            <input id="username" type="text">
+            <div class='displayNone register'>
+                <p>Username</p>
+                <input id="username" type="text">
+            </div>
             <p>E-mail</p>
             <input id="email" type="email">
             <p>Password</p>
             <input id="password" type="password">
-            <p>Repeat password</p>
-            <input id="password2" type="password">
-            <p>
-                <div id="signUp" class="btn"> Sign up </div>
-                <span>
-                    or <a href="sign-in.html">Sign in</a>
-                </span>
-            </p>
+            <div class='displayNone register'>
+                <p>Repeat password</p>
+                <input id="password2" type="password">
+            </div>
+            <div id="logIn" class="btn">Log in</div>
+            <span> or </span>
+            <div id="register" class="btn">Register</div>
         </form>
+        <div id="message"></div>
     </div>
 </main>
 </body>

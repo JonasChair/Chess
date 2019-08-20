@@ -12,7 +12,7 @@ body{
     height: 100%;
 }
 .bg-image{
-    background-image: url(https://picsum.photos/1200/800);
+    background-image: url('../img/loginBG.jpg');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -32,7 +32,8 @@ body{
 
         main > .left {
             position: absolute;
-            background: url(https://picsum.photos/1200/800);
+            background: url('../img/loginBG.jpg');
+            background-position: center;
             float: left;
             width: 40%;
             top: 5%;
@@ -58,6 +59,7 @@ body{
                 }
 
         main > .right {
+            position: relative;
             float: right;
             width:60%;
             padding:50px;
@@ -68,17 +70,6 @@ body{
             margin-top: 0px;
             border-radius: 2px;
         }
-            .x {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                text-decoration: none;
-                color: blue;
-            }
-                .x:hover {
-                    cursor: pointer;
-                }
-
             .form {
                 display: inline-block;
                 float: left;
@@ -86,31 +77,63 @@ body{
                 text-transform: uppercase;
                 color: #C0C0C0;       
             }
-            .form > input{
-                display: inline-block;
-                float: left;
-                width: 100%;
-                height: 30px;
-                margin-bottom: 30px;
-                margin-top: 15px;
-                border: none;
-                border-bottom: 1px solid #C0C0C0;
-                padding-top: 5px;
-            }
 
-            .form > p {
-                display:inline-block;
-                width: 100%;
-                text-transform: none;
-            }
+                .form input{
+                    display: inline-block;
+                    float: left;
+                    width: 100%;
+                    height: 30px;
+                    margin-bottom: 30px;
+                    margin-top: 15px;
+                    border: none;
+                    border-bottom: 1px solid #C0C0C0;
+                    padding-top: 5px;
+                }
 
-            .form > p >  span {
-                padding-top: 7px;
-                padding-bottom: 7px;
-            }
+                .form p {
+                    display: inline-block;
+                    width: 100%;
+                    text-transform: none;
+                }
 
+                .form > span {
+                    padding-top: 7px;
+                    padding-bottom: 7px;
+                }
+                .form > .register {
+                    display: inline-block;
+                    width: 100%;
+                    animation-name: register;
+                    animation-duration: 0.3s;
+                    animation-fill-mode: forwards;
+                }
+                @keyframes register {
+                    from {
+                        font-size: 0px;
+                        height: 0px;
+                    }
+                    to {
+                        font-size: 16px;
+                        height: 94px;
+                    }
+                }
+
+                .form > .displayNone{
+                    display: none;
+                }
+
+            form .badInput{
+                border-color: red;
+            }
             a{
                 text-decoration: none;
+            }
+            #message {
+                position: absolute;
+                color: red;
+                bottom : 15px;
+                left: 50px;
+                width: 100%;
             }
                 .btn {
                     color: white;
@@ -121,6 +144,7 @@ body{
                     padding-top: 7px;
                     padding-bottom: 7px;
                     margin-right: 10px;
+                    margin-left: 10px;
                 }
                 .btn:hover {
                     cursor: pointer;
