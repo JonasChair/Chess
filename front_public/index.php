@@ -29,17 +29,23 @@ $file = preg_replace('/\?.+$/', '', $file);
 
 $bla = new chess\Api;
 
-
-if($file == ''){
-    require DIR.'templates/login.php';
-}
-
 if (preg_match('/^game/', $file)){
     $game_id = preg_replace('/^game/', '', $file);
     require DIR.'templates/game.php';
+    die();
 }
 
 if (preg_match('/^api/', $file)){
     $request = preg_replace('/^api\//','',$file);
     $bla::call_func($bla::parse_request($request));
+    die();
+}
+
+if( isset($_SESSION['status']) && $_SESSION['status'] == 1){
+    header('Location: http://localhost/chess/front_public/game');
+    die();
+}else{
+    if($file == ''){
+        require DIR.'templates/login.php';
+    }
 }

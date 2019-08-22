@@ -24,14 +24,21 @@ var states = {
 
 function register(){
     if (states.username && states.email && states.password){
-        axios.post('http://localhost/chess/front_public/api/signUp',{
+        axios.post('http://localhost/chess/front_public/api/register',{
             username: document.querySelector('#username').value,
             email: document.querySelector('#email').value,
             password: document.querySelector('#password').value,
             password2: document.querySelector('#password2').value
         })
         .then(function (response) {
-        console.log(response.data);
+            switch (response.data.status){
+                case 'error':
+                    document.querySelector('#message').innerHTML = response.data.info;
+                    break;
+                case 'login':
+                    openLogin();
+                    break;
+            }
         })
         .catch(function (error) {
         console.log(error);
@@ -50,31 +57,6 @@ function register(){
     }
 }
 
-function checkUsername(){
-    var regex = /[\w]{5,}/;
-    console.log(this.value);
-    
-    if (!regex.test(this.value)){
-        this.classList.add('badInput');
-        states.username = false;
-    }else{
-        this.classList.remove('badInput');
-        states.username = true;
-    }
-}
-
-function checkEmail(){
-    var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    
-    if(!regex.test(this.value) && this.value.length > 5){
-        this.classList.add('badInput');
-        states.email = false;
-    }else{
-        this.classList.remove('badInput');
-        states.email = true;
-    }
-}
-
 function checkPassword(){
     password = document.getElementById('password');
     password2 = document.getElementById('password2');
@@ -89,12 +71,43 @@ function checkPassword(){
     }
 }
 
+function checkUsername(){
+    var regex = /[\w]{5,}/;    
+    if (!regex.test(this.value)){
+        this.classList.add('badInput');
+        states.username = false;
+    }else{
+        this.classList.remove('badInput');
+        states.username = true;
+    }
+}
+
+function checkEmail(){
+    var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    
+    if(!regex.test(this.value)){
+        this.classList.add('badInput');
+        states.email = false;
+    }else{
+        this.classList.remove('badInput');
+        states.email = true;
+    }
+}
+
 function login(){
     axios.post('http://localhost/chess/front_public/api/login',{
         email: document.querySelector('#email').value,
         password: document.querySelector('#password').value
     })
     .then(function (response) {
+        switch (response.data.status){
+            case 'error':
+                document.querySelector('#message').innerHTML = response.data.info;
+                break;
+            case 'redirect':
+                window.location.replace('http://localhost/chess/front_public/' + response.data.info);
+                break;
+        }
     console.log(response.data);
     })
     .catch(function (error) {

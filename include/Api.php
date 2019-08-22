@@ -27,26 +27,58 @@ class Api implements ApiInterface{
 
     function new_user($parsed_request){
         global $pdo;
-        $stmt = $pdo->prepare('INSERT INTO users (email, password, nickname)
-            VALUES (:email, :password , :username)');
-        
+
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');
+
         $stmt->execute([
-            'email' => $parsed_request->email,
-            'password' => $parsed_request->password,
-            'username' => $parsed_request->username
+            $parsed_request->email
         ]);
-        echo json_encode($parsed_request);
+
+        if(sizeof($stmt->fetchAll()) > 0){
+            $response = new \stdClass();
+            $response->status = 'error';
+            $response->info = 'Email already registered';
+            echo json_encode($response);
+            die();
+        }else{
+            $stmt = $pdo->prepare('INSERT INTO users (email, password, nickname)
+                VALUES (:email, :password , :username)');
+            
+            $stmt->execute([
+                'email' => $parsed_request->email,
+                'password' => $parsed_request->password,
+                'username' => $parsed_request->username
+            ]);
+            $response = new \stdClass();
+            $response->status = 'login';
+            echo json_encode($response);
+            die();
+        }
     }
 
     function login($parsed_request){
         global $pdo;
-        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ? and password = ?');
+        $stmt = $pdo->prepare('SELECT ID FROM users WHERE email = ? and password = ?');
 
         $stmt->execute([
             $parsed_request->email,
             $parsed_request->password
         ]);
 
-        $stmt->fetchAll()[0]['id'];
+        if ($id = $stmt->fetch()['ID']){
+            $_SESSION['user_id'] = $stmt->fetch()['ID'];
+            $_SESSION['status'] = 1; //status 1 -> logedIn
+            $response = new \stdClass();
+            $response->status = 'redirect';
+            $response->info = 'game';
+            echo json_encode($response);
+            die();
+        }else{
+            $response = new \stdClass();
+            $response->status = 'error';
+            $response->info = 'Wrong information please try again.';
+            echo json_encode($response);
+            die();
+        }
     }
 }
