@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chess 0.1</title>
     <link rel="stylesheet" href=<?= url('css/all.min.css')?>>
-    <link rel="stylesheet" href=<?= url('css/main.css')?>>
+    <link rel="stylesheet" href=<?= url('css/game.css')?>>
 </head>
 <body>
     <div class="game">
