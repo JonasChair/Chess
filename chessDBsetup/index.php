@@ -1,9 +1,13 @@
 <?php
 
-$host = '127.0.0.1';
-$db   = 'chess';
-$user = 'root';
-$pass = '';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$host = 'localhost';
+$db   = 'id10579511_chess';
+$user = 'id10579511_chess';
+$pass = 'belenkas';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -18,6 +22,7 @@ try {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
+echo 'Hello';
 
 $sql = "CREATE TABLE IF NOT EXISTS users (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,

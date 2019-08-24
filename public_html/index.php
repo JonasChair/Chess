@@ -1,14 +1,17 @@
 <?php 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 define ('DIR', __DIR__.'/../');
-define ('URL', 'http://localhost/chess/front_public/');
+define ('URL', 'https://jonaschairchess.000webhostapp.com/');
 include DIR.'include/functions.php';
 
 // DB connection initiation
-$host = '127.0.0.1';
-$db   = 'chess';
-$user = 'root';
-$pass = '';
+$host = 'localhost';
+$db   = 'id10579511_chess';
+$user = 'id10579511_chess';
+$pass = 'belenkas';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -42,7 +45,7 @@ if (preg_match('/^api/', $file)){
 }
 
 if( isset($_SESSION['status']) && $_SESSION['status'] == 1){
-    header('Location: http://localhost/chess/front_public/game');
+    header('Location: '.URL.'game');
     die();
 }else{
     if($file == ''){

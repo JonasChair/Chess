@@ -4,11 +4,9 @@ body, body *{
     vertical-align: top;
     box-sizing: border-box;
 }
-body *{
+body{
     display: inline-block;
     outline: none;
-}
-body{
     height: 100%;
 }
 .bg-image{
@@ -22,15 +20,17 @@ body{
     position: absolute;
 }
     body > main {
+        display: inline-block;
         z-index: 2;
         width: 800px;
         margin-top: 60px;
-        margin-left: calc( (100% - 800px) / 2 );
+        margin-left: calc( (100vw - 800px) / 2 );
         position: relative;
         font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     }
 
         main > .left {
+            display: inline-block;
             position: absolute;
             background: url('../img/loginBG.jpg');
             background-position: center;
@@ -42,6 +42,7 @@ body{
             color: #FFF;
         }
             .left > h1 {
+                display: inline-block;
                 text-shadow: black 0px 0px 2px;
                 position: absolute;
                 float: left;
@@ -49,6 +50,7 @@ body{
                 font-weight: 100;
             }
             .left > p{
+                display: inline-block;
                 position:absolute;
                 float:left;
                 bottom: 20px;
@@ -59,6 +61,7 @@ body{
                 }
 
         main > .right {
+            display: inline-block;
             position: relative;
             float: right;
             width:60%;
@@ -97,6 +100,7 @@ body{
                 }
 
                 .form > span {
+                    display: inline-block;
                     padding-top: 7px;
                     padding-bottom: 7px;
                 }
@@ -129,6 +133,7 @@ body{
                 text-decoration: none;
             }
             #message {
+                display: inline-block;
                 position: absolute;
                 color: red;
                 bottom : 15px;
@@ -136,6 +141,7 @@ body{
                 width: 100%;
             }
                 .btn {
+                    display: inline-block;
                     color: white;
                     background-color: #314DD2;
                     border-radius: 24px;
