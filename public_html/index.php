@@ -17,7 +17,7 @@ if (preg_match('/^game/', $file)){
 
 if (preg_match('/^api/', $file)){
     $request = preg_replace('/^api\//','',$file);
-    $bla::call_func($bla::parse_request($request));
+    $bla->call_func($bla->parse_request($request));
     die();
 }
 

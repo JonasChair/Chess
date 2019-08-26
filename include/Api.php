@@ -64,10 +64,11 @@ class Api implements ApiInterface{
             $parsed_request->email,
             $parsed_request->password
         ]);
-
-        if ($id = $stmt->fetch()['ID']){
-            $_SESSION['user_id'] = $stmt->fetch()['ID'];
-            $_SESSION['username'] = $stmt->fetch()['nickname'];
+        $user_info = $stmt->fetchAll()[0];
+        _d($user_info);
+        if ($user_info['id']){
+            $_SESSION['user_id'] = $user_info['id'];
+            $_SESSION['username'] = $user_info['nickname'];
             $_SESSION['status'] = 1; //status 1 -> logedIn
             $response = new \stdClass();
             $response->status = 'redirect';
