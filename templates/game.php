@@ -7,8 +7,12 @@
     <title>Chess 0.1</title>
     <link rel="stylesheet" href=<?= url('css/all.min.css')?>>
     <link rel="stylesheet" href=<?= url('css/game.css')?>>
+    <link rel="stylesheet" href=<?= url('css/header.css')?>>
 </head>
 <body>
+<?php
+include DIR.'templates/header.php';
+?>
     <div class="game">
         <section class="board">
             <div class="coord north horizontal">

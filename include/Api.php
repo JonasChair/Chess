@@ -58,7 +58,7 @@ class Api implements ApiInterface{
 
     function login($parsed_request){
         global $pdo;
-        $stmt = $pdo->prepare('SELECT ID FROM users WHERE email = ? and password = ?');
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ? and password = ?');
 
         $stmt->execute([
             $parsed_request->email,
@@ -67,6 +67,7 @@ class Api implements ApiInterface{
 
         if ($id = $stmt->fetch()['ID']){
             $_SESSION['user_id'] = $stmt->fetch()['ID'];
+            $_SESSION['username'] = $stmt->fetch()['nickname'];
             $_SESSION['status'] = 1; //status 1 -> logedIn
             $response = new \stdClass();
             $response->status = 'redirect';
