@@ -68,7 +68,6 @@ class Api implements ApiInterface{
             $parsed_request->password
         ]);
         $user_info = $stmt->fetchAll()[0];
-        _d($user_info);
         if ($user_info['id']){
             $_SESSION['user_id'] = $user_info['id'];
             $_SESSION['username'] = $user_info['nickname'];

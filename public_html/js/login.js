@@ -108,7 +108,6 @@ function login(){
                 window.location.replace(variables.url + response.data.info);
                 break;
         }
-    console.log(response.data);
     })
     .catch(function (error) {
     console.log(error);
