@@ -1,0 +1,46 @@
+body,
+body *{
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+    box-sizing: border-box;
+}
+
+body {
+    display: grid;
+    grid-template-areas:
+    'header header header'
+    '. games .';
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-rows: 51px;
+}
+
+    .games {
+        display: grid;
+        grid-area: games;
+        grid-template-columns:1fr 1fr 1fr 1fr;
+        grid-template-rows: 150px;
+        grid-gap: 20px;
+        grid-row-gap: 20px;
+    }
+        .game {
+            display: grid;
+            grid-template-columns:1fr 20px 1fr;
+            background: lightseagreen; 
+            border-radius: 20px;
+            padding: 5px;
+        }
+        .player{
+            display: inline-block;
+            float: left;
+        }
+        .player.white{
+        }
+        .player.black{
+        }
+            i.white{
+                color: white;
+            }
+            i.black{
+                color: black;
+            }

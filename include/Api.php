@@ -74,7 +74,7 @@ class Api implements ApiInterface{
             $_SESSION['status'] = 1; //status 1 -> logedIn
             $response = new \stdClass();
             $response->status = 'redirect';
-            $response->info = 'game';
+            $response->info = 'games';
             echo json_encode($response);
             die();
         }else{

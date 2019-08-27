@@ -9,6 +9,11 @@ $file = preg_replace('/\?.+$/', '', $file);
 
 $bla = new chess\Api;
 
+if (preg_match('/^games/', $file)){
+    require DIR.'templates/games.php';
+    die();
+}
+
 if (preg_match('/^game/', $file)){
     $game_id = preg_replace('/^game/', '', $file);
     require DIR.'templates/game.php';
