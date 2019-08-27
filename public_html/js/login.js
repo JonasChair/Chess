@@ -24,7 +24,7 @@ var states = {
 
 function register(){
     if (states.username && states.email && states.password){
-        axios.post('http://localhost/chess/public_html/api/register',{
+        axios.post(variables.url + 'api/register',{
             username: document.querySelector('#username').value,
             email: document.querySelector('#email').value,
             password: document.querySelector('#password').value,
@@ -95,7 +95,7 @@ function checkEmail(){
 }
 
 function login(){
-    axios.post('http://localhost/chess/public_html/api/login',{
+    axios.post(variables.url + 'api/login',{
         email: document.querySelector('#email').value,
         password: document.querySelector('#password').value
     })
@@ -105,7 +105,7 @@ function login(){
                 document.querySelector('#message').innerHTML = response.data.info;
                 break;
             case 'redirect':
-                window.location.replace('http://localhost/chess/public_html/' + response.data.info);
+                window.location.replace(variables.url + response.data.info);
                 break;
         }
     console.log(response.data);

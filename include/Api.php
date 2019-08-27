@@ -18,6 +18,9 @@ class Api implements ApiInterface{
             case 'login':
                 self::login(json_decode(file_get_contents("php://input")));
                 break;
+            case 'logoff':
+                self::logoff(json_decode(file_get_contents("php://input")));
+                break;
         }
     }
 
@@ -82,5 +85,11 @@ class Api implements ApiInterface{
             echo json_encode($response);
             die();
         }
+    }
+
+    function logoff($parsed_request){
+        session_destroy();
+        header('Location: '.url());
+        die();
     }
 }
