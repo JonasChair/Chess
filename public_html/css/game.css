@@ -8,9 +8,11 @@ body *{
 
 body{
     display: grid;
-    grid-template-areas: '. game .';
+    grid-template-areas: 
+    'header header header'
+    '. game .';
     grid-template-columns: 1fr 900px 1fr;
-    grid-template-rows: 470px;
+    grid-template-rows: 51px 470px;
 }
 
 .game {

@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
-define ('URL', 'https://localhost/public_html/');
+define ('URL', 'http://localhost/chess/public_html/');
 
 // DB connection initiation
 $host = 'localhost';

@@ -7,8 +7,10 @@
     <title>Chess 0.1</title>
     <link rel="stylesheet" href=<?= url('css/all.min.css')?>>
     <link rel="stylesheet" href=<?= url('css/main.css')?>>
+    <link rel="stylesheet" href=<?= url('css/header.css')?>>
 </head>
 <body>
+<?php include DIR.'templates/header.php'?>
     <div class='bg-image'></div>
 <main>
     <div class="left">

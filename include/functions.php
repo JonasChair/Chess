@@ -1,8 +1,13 @@
 <?php
 
-function url($location)
-{
+function url($location = ''){
     return URL.$location;
+}
+
+function jsvariables(){
+    return '<script>var variables;
+            variables = {url :"'. URL .'"};
+            </script>';
 }
 
 spl_autoload_register(function ($class) {

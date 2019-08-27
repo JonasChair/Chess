@@ -1,6 +1,6 @@
 <?php 
 define ('DIR', __DIR__.'/../');
-include DIR.'include/config_live.php';
+include DIR.'include/config_production.php';
 include DIR.'include/functions.php';
 
 $installFolder = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
@@ -17,7 +17,7 @@ if (preg_match('/^game/', $file)){
 
 if (preg_match('/^api/', $file)){
     $request = preg_replace('/^api\//','',$file);
-    $bla::call_func($bla::parse_request($request));
+    $bla->call_func($bla->parse_request($request));
     die();
 }
 
