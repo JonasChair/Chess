@@ -1,7 +1,7 @@
 <?php
 
 define ('DIR', __DIR__.'/../');
-include DIR.'include/config_live.php';
+include DIR.'include/config_production.php';
 
 $sql = "CREATE TABLE IF NOT EXISTS users (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -17,18 +17,28 @@ $stmt = $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS game_states (
     id INT(2) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    state VARCHAR(4)
+    state VARCHAR(4) UNIQUE
     )";
 
 $stmt = $pdo->exec($sql);
 
+$sql = "INSERT INTO game_states(state) 
+        VALUES ('wait'),
+               ('strt'),
+               ('prgr'),
+               ('wwin'),
+               ('bwin'),
+               ('draw')";
+
+$stmt = $pdo->exec($sql);
+
 $sql = "CREATE TABLE IF NOT EXISTS games (
-    game_id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     timecontrol CHAR(5),
     white_id INT(6) UNSIGNED,
     black_id INT(6) UNSIGNED,
     turn char(1) DEFAULT 'w',
-    game_state INT(2) UNSIGNED,
+    game_state INT(2) UNSIGNED DEFAULT 1,
     white_rating INT(4) UNSIGNED,
     black_rating INT(4) UNSIGNED,
     FOREIGN KEY (game_state) REFERENCES game_states(id), 

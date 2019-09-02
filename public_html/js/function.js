@@ -452,7 +452,7 @@ function initBoard() {
 function move() {
     var col = this.attributes['col-index'].value,
         row = this.parentNode.attributes['row-index'].value;
-    axios.post('http://localhost/chess/front_public/api/move',{
+    axios.post(variables.url + 'api/move',{
         ...selectedPeace
         // move_start: {row: selectedPeace.row, col: selectedPeace.col},
         // move_end: {row: row, col: col}

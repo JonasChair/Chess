@@ -45,6 +45,5 @@
     </div>
 </main>
 </body>
-<script src=<?= url('js/axios.min.js')?>></script>
 <script src=<?= url('js/login.js')?>></script>
 </html>
