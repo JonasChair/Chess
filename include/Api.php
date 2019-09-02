@@ -21,6 +21,9 @@ class Api implements ApiInterface{
             case 'logoff':
                 self::logoff(json_decode(file_get_contents("php://input")));
                 break;
+            case 'newgame':
+                self::newgame(json_decode(file_get_contents("php://input")));
+                break;
         }
     }
 
@@ -71,12 +74,28 @@ class Api implements ApiInterface{
         if ($user_info['id']){
             $_SESSION['user_id'] = $user_info['id'];
             $_SESSION['username'] = $user_info['nickname'];
+            $_SESSION['rating'] = $user_info['rating'];
             $_SESSION['status'] = 1; //status 1 -> logedIn
-            $response = new \stdClass();
-            $response->status = 'redirect';
-            $response->info = 'games';
-            echo json_encode($response);
-            die();
+
+            $stmt = $pdo->prepare('SELECT * FROM games WHERE (white_id = ? OR black_id = ?) AND game_state < 4');
+            $stmt->execute([
+                $_SESSION['user_id'],
+                $_SESSION['user_id']
+            ]);
+            if($game = $stmt->fetch()){
+                $_SESSION['active_game'] = $game['game_id'];
+                $response = new \stdClass();
+                $response->status = 'redirect';
+                $response->info = 'game';
+                echo json_encode($response);
+                die();
+            }else{
+                $response = new \stdClass();
+                $response->status = 'redirect';
+                $response->info = 'games';
+                echo json_encode($response);
+                die();
+            }
         }else{
             $response = new \stdClass();
             $response->status = 'error';
@@ -90,5 +109,43 @@ class Api implements ApiInterface{
         session_destroy();
         header('Location: '.url());
         die();
+    }
+
+    function newgame(){
+        global $pdo;
+        if(isset($_SESSION['status']) && $_SESSION['status'] == 1){
+            $stmt = $pdo->prepare('SELECT * FROM games WHERE (white_id = ? OR black_id = ?) AND game_state < 4');
+            $stmt->execute([
+                $_SESSION['user_id'],
+                $_SESSION['user_id']
+            ]);
+            
+            if($game = $stmt->fetch()){
+                $_SESSION['active_game'] = $game['game_id'];
+            }else{
+                $stmt = $pdo->prepare('INSERT INTO games (white_id , white_rating) VALUES (:white_id , :white_rating)');
+                $stmt->execute([
+                    'white_id' => $_SESSION['user_id'],
+                    'white_rating' => $_SESSION['rating']
+                ]);
+                $stmt = $pdo->prepare('SELECT * FROM games where (white_id = ? OR black_id = ?) AND game_state < 4');
+                $stmt->execute([
+                    $_SESSION['user_id'],
+                    $_SESSION['user_id']
+                ]);
+                $_SESSION['active_game'] = $stmt->fetch()['game_id'];
+            }
+            $response = new \stdClass();
+            $response->status = 'redirect';
+            $response->info = 'game';
+            echo json_encode($response);
+            die();
+        }else{
+            $response = new \stdClass();
+            $response->status = 'error';
+            $response->info = 'Not logged in';
+            echo json_encode($response);
+            die();
+        }
     }
 }

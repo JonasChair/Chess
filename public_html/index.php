@@ -10,14 +10,24 @@ $file = preg_replace('/\?.+$/', '', $file);
 $bla = new chess\Api;
 
 if (preg_match('/^games/', $file)){
-    require DIR.'templates/games.php';
-    die();
+    if( isset($_SESSION['active_game'])) {
+        header('Location: '.URL.'game');
+        die();
+    }else{
+        require DIR.'templates/games.php';
+        die();
+    }
 }
 
 if (preg_match('/^game/', $file)){
-    $game_id = preg_replace('/^game/', '', $file);
-    require DIR.'templates/game.php';
-    die();
+    preg_replace('/^game/', '', $file);
+    if( !isset($_SESSION['active_game'])) {
+        header('Location: '.URL.'games');
+        die();
+    }else{
+        require DIR.'templates/game.php';
+        die();
+    }
 }
 
 if (preg_match('/^api/', $file)){

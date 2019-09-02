@@ -19,28 +19,57 @@ body {
         display: grid;
         grid-area: games;
         grid-template-columns:1fr 1fr 1fr 1fr;
-        grid-template-rows: 150px;
+        grid-template-rows: 1fr 1fr;
         grid-gap: 20px;
         grid-row-gap: 20px;
     }
         .game {
             display: grid;
-            grid-template-columns:1fr 20px 1fr;
+            grid-template-areas: 
+            'playerBlack'
+            'board'
+            'playerWhite';
+            grid-template-rows: 1fr 8fr 1fr;
             background: lightseagreen; 
             border-radius: 20px;
-            padding: 5px;
+            padding: 8px;
         }
-        .player{
-            display: inline-block;
-            float: left;
-        }
-        .player.white{
-        }
-        .player.black{
-        }
-            i.white{
-                color: white;
+            .game.new {
+                text-align: center;
+                background-color: lightblue;
+                display: inline-block;
             }
-            i.black{
-                color: black;
+            .game:hover{
+                cursor: pointer;
             }
+            .game.new > svg{
+                height: auto;
+                width: auto;
+            }
+            .board {
+                grid-area: board;
+                background-color: blanchedalmond;
+            }
+            .player {
+                display: inline-block;
+            }
+            .player.white {
+                grid-area: playerWhite;
+            }
+            .player.black {
+                grid-area: playerBlack;
+            }
+                .player.white > *{
+                    display: inline-block;
+                    float: right;
+                }
+                .player.black > *{
+                    display: inline-block;
+                    float: left;
+                }
+                i.white {
+                    color: white;
+                }
+                i.black {
+                    color: black;
+                }

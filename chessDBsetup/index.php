@@ -33,12 +33,12 @@ $sql = "INSERT INTO game_states(state)
 $stmt = $pdo->exec($sql);
 
 $sql = "CREATE TABLE IF NOT EXISTS games (
-    game_id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     timecontrol CHAR(5),
     white_id INT(6) UNSIGNED,
     black_id INT(6) UNSIGNED,
     turn char(1) DEFAULT 'w',
-    game_state INT(2) UNSIGNED DEFAULT 0,
+    game_state INT(2) UNSIGNED DEFAULT 1,
     white_rating INT(4) UNSIGNED,
     black_rating INT(4) UNSIGNED,
     FOREIGN KEY (game_state) REFERENCES game_states(id), 

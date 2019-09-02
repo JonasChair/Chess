@@ -1,3 +1,6 @@
+<?php 
+    
+?>
 <header>
     <a href='<?= url('')?>' class = "logo">Chess</a>
     <nav>
@@ -10,3 +13,4 @@
     </nav>
 </header>
 <?= jsvariables()?>
+<script src=<?= url('js/axios.min.js')?>></script>
