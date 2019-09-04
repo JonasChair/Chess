@@ -9,8 +9,15 @@ $file = preg_replace('/\?.+$/', '', $file);
 
 $bla = new chess\Api;
 
+
+if (preg_match('/^api/', $file)){
+    $request = preg_replace('/^api\//','',$file);
+    $bla->call_func($bla->parse_request($request));
+    die();
+}
+
 if (preg_match('/^games/', $file)){
-    if( isset($_SESSION['active_game'])) {
+    if( isset($_SESSION['active_game']) || isset($_SESSION['spectate_game']) ) {
         header('Location: '.URL.'game');
         die();
     }else{
@@ -21,7 +28,7 @@ if (preg_match('/^games/', $file)){
 
 if (preg_match('/^game/', $file)){
     preg_replace('/^game/', '', $file);
-    if( !isset($_SESSION['active_game'])) {
+    if( !isset($_SESSION['active_game']) && !isset($_SESSION['spectate_game']) ) {
         header('Location: '.URL.'games');
         die();
     }else{
@@ -30,17 +37,10 @@ if (preg_match('/^game/', $file)){
     }
 }
 
-if (preg_match('/^api/', $file)){
-    $request = preg_replace('/^api\//','',$file);
-    $bla->call_func($bla->parse_request($request));
-    die();
-}
-
 if( isset($_SESSION['status']) && $_SESSION['status'] == 1){
-    header('Location: '.URL.'game');
+    header('Location: '.URL.'games');
     die();
 }else{
-    if($file == ''){
-        require DIR.'templates/login.php';
-    }
+    require DIR.'templates/login.php';
+    die();
 }

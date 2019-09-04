@@ -53,7 +53,7 @@ $sql = "CREATE TABLE IF NOT EXISTs move_list(
     move_numb INT(3) UNSIGNED NOT NULL,
     movement VARCHAR(3) NOT NULL,
     PRIMARY KEY (game_id, move_numb),
-    FOREIGN KEY (game_id) REFERENCES games(game_id)
+    FOREIGN KEY (game_id) REFERENCES games(id)
 )";
 
 $stmt = $pdo->exec($sql);
