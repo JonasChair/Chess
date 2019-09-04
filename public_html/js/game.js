@@ -25,7 +25,7 @@ var peaces = {
     empty : ''
 }
 
-var horizontal = ['A','B','C','D','E','F','G','H'];
+var horizontal = ['a','b','c','d','e','f','g','h'];
 
 var selectedPeace = {
         row: '',
@@ -46,6 +46,7 @@ var castle = [];
 var gameBoard = {
     turn: 'white',
     state: 'start',
+    moves: [],
     board:
         [[],[],[],[],[],[],[],[]]
 }
@@ -465,6 +466,8 @@ function initPeace(name, color, row, col) {
 function updatePeaceHTML(row, col) {
     var peace = gameBoard.board[row][col];
     peace.HTML = '<i class="fas fa-chess-' + peace.name + ' ' + peace.color + ' ' + peace.selected + ' ' + peace.highlighted + '"></i>';
+    peace.coord.row = row;
+    peace.coord.col = horizontal[col];
 }
 
 function initBoard() {
@@ -502,8 +505,9 @@ function initBoard() {
 function move() {
     var col = this.attributes['col-index'].value,
         row = this.parentNode.attributes['row-index'].value;
+    var position = gameBoard.moves.push( makeNotation(row,col) ) -1;
     axios.post(variables.url + 'api/move',{
-        ...selectedPeace
+        notation: gameBoard.moves[position]
         // move_start: {row: selectedPeace.row, col: selectedPeace.col},
         // move_end: {row: row, col: col}
         })
@@ -597,6 +601,38 @@ function promote() {
 
 function toggleTurn() {
     gameBoard.turn = (gameBoard.turn === colors.white) ? colors.black : colors.white;
+}
+
+function makeNotation(row,col) {
+    var notation = '';
+    switch (gameBoard.board[selectedPeace.row][selectedPeace.col].name) {
+        case peaces.king:
+            notation += 'K';
+            break;
+        case peaces.bishop:
+            notation += 'B';
+            break;
+        case peaces.rook:
+            notation += 'R';
+            break;
+        case peaces.knight:
+            notation += 'N';
+            break;
+        case peaces.queen:
+            notation += 'Q';
+            break;
+        default:
+            if(gameBoard.board[row][col].name != peaces.empty){
+                notation += horizontal[selectedPeace.col];
+            }
+            break;
+    }
+    if(gameBoard.board[row][col].name != peaces.empty){
+        notation += 'x';
+    }
+    row++;
+    notation += horizontal[col] + row;
+    return notation;
 }
 
 function renderBoard() {
