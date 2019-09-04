@@ -24,6 +24,12 @@ class Api implements ApiInterface{
             case 'newgame':
                 self::newgame(json_decode(file_get_contents("php://input")));
                 break;
+            case 'joingame':
+                self::joingame(json_decode(file_get_contents("php://input")));
+                break;
+            case 'spectategame':
+                self::spectategame(json_decode(file_get_contents("php://input")));           
+                break;     
         }
     }
 
@@ -83,7 +89,7 @@ class Api implements ApiInterface{
                 $_SESSION['user_id']
             ]);
             if($game = $stmt->fetch()){
-                $_SESSION['active_game'] = $game['game_id'];
+                $_SESSION['active_game'] = $game['id'];
                 $response = new \stdClass();
                 $response->status = 'redirect';
                 $response->info = 'game';
@@ -121,7 +127,7 @@ class Api implements ApiInterface{
             ]);
             
             if($game = $stmt->fetch()){
-                $_SESSION['active_game'] = $game['game_id'];
+                $_SESSION['active_game'] = $game['id'];
             }else{
                 $stmt = $pdo->prepare('INSERT INTO games (white_id , white_rating) VALUES (:white_id , :white_rating)');
                 $stmt->execute([
@@ -133,7 +139,7 @@ class Api implements ApiInterface{
                     $_SESSION['user_id'],
                     $_SESSION['user_id']
                 ]);
-                $_SESSION['active_game'] = $stmt->fetch()['game_id'];
+                $_SESSION['active_game'] = $stmt->fetch()['id'];
             }
             $response = new \stdClass();
             $response->status = 'redirect';
@@ -147,5 +153,34 @@ class Api implements ApiInterface{
             echo json_encode($response);
             die();
         }
+    }
+
+    function joingame($parsed_request){
+        global $pdo;
+        $game_id = $parsed_request->game_id;
+        $stmt = $pdo->prepare('UPDATE games SET black_id =:black_id, black_rating=:black_rating, game_state = 2 WHERE id = :game_id');
+        $stmt->execute([
+            'black_id' => $_SESSION['user_id'],
+            'black_rating' => $_SESSION['rating'],
+            'game_id' => $game_id
+        ]);
+        $_SESSION['active_game'] = $game_id;
+        $response = new \stdClass();
+        $response->status = 'redirect';
+        $response->info = 'game';
+        echo json_encode($response);
+        die();
+    }
+
+    function spectategame($parsed_request){
+        global $pdo;
+        $game_id = $parsed_request->game_id;
+        $_SESSION['spectate_game'] = $game_id;
+        _d($_SESSION);
+        $response = new \stdClass();
+        $response->status = 'redirect';
+        $response->info = 'game';
+        echo json_encode($response);
+        die();
     }
 }
