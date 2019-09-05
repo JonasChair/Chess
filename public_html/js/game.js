@@ -62,12 +62,13 @@ function removeEventListeners(data, type, funct) {
 function displayMoves() {    
     var col = this.attributes['col-index'].value,
         row = this.parentNode.attributes['row-index'].value;
-    
-    if (gameBoard.board[row][col].color === gameBoard.turn) {
-        toggleSelect(row,col);
-        getPath(row,col);
-        toggleHighlight(path);
-        renderBoard();
+    if(gameBoard.turn === variables.playerColor){
+        if (gameBoard.board[row][col].color === gameBoard.turn) {
+            toggleSelect(row,col);
+            getPath(row,col);
+            toggleHighlight(path);
+            renderBoard();
+        }
     }
 }
 

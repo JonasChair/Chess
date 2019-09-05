@@ -83,13 +83,24 @@ class Api implements ApiInterface{
             $_SESSION['rating'] = $user_info['rating'];
             $_SESSION['status'] = 1; //status 1 -> logedIn
 
-            $stmt = $pdo->prepare('SELECT * FROM games WHERE (white_id = ? OR black_id = ?) AND game_state < 4');
+            $stmt = $pdo->prepare('SELECT * FROM games WHERE (white_id = ?) AND game_state < 4');
             $stmt->execute([
-                $_SESSION['user_id'],
+                $_SESSION['user_id']
+            ]);
+            
+            if($game = $stmt->fetch()){
+                $_SESSION['active_game'] = $game['id'];
+                $_SESSION['player_color'] = 'white';
+            };
+            $stmt = $pdo->prepare('SELECT * FROM games WHERE (black_id = ?) AND game_state < 4');
+            $stmt->execute([
                 $_SESSION['user_id']
             ]);
             if($game = $stmt->fetch()){
                 $_SESSION['active_game'] = $game['id'];
+                $_SESSION['player_color'] = 'black';
+            };
+            if($game){
                 $response = new \stdClass();
                 $response->status = 'redirect';
                 $response->info = 'game';
@@ -120,15 +131,24 @@ class Api implements ApiInterface{
     function newgame(){
         global $pdo;
         if(isset($_SESSION['status']) && $_SESSION['status'] == 1){
-            $stmt = $pdo->prepare('SELECT * FROM games WHERE (white_id = ? OR black_id = ?) AND game_state < 4');
+            $stmt = $pdo->prepare('SELECT * FROM games WHERE (white_id = ?) AND game_state < 4');
             $stmt->execute([
-                $_SESSION['user_id'],
                 $_SESSION['user_id']
             ]);
             
             if($game = $stmt->fetch()){
                 $_SESSION['active_game'] = $game['id'];
-            }else{
+                $_SESSION['player_color'] = 'white';
+            };
+            $stmt = $pdo->prepare('SELECT * FROM games WHERE (black_id = ?) AND game_state < 4');
+            $stmt->execute([
+                $_SESSION['user_id']
+            ]);
+            if($game = $stmt->fetch()){
+                $_SESSION['active_game'] = $game['id'];
+                $_SESSION['player_color'] = 'black';
+            };
+            if(!isset($_SESSION['active_game'])){
                 $stmt = $pdo->prepare('INSERT INTO games (white_id , white_rating) VALUES (:white_id , :white_rating)');
                 $stmt->execute([
                     'white_id' => $_SESSION['user_id'],
@@ -140,11 +160,13 @@ class Api implements ApiInterface{
                     $_SESSION['user_id']
                 ]);
                 $_SESSION['active_game'] = $stmt->fetch()['id'];
+                $_SESSION['player_color'] = 'white';
             }
             $response = new \stdClass();
             $response->status = 'redirect';
             $response->info = 'game';
             echo json_encode($response);
+            _d($_SESSION);
             die();
         }else{
             $response = new \stdClass();
@@ -165,10 +187,13 @@ class Api implements ApiInterface{
             'game_id' => $game_id
         ]);
         $_SESSION['active_game'] = $game_id;
+        $_SESSION['player_color'] = 'black';
+
         $response = new \stdClass();
         $response->status = 'redirect';
         $response->info = 'game';
         echo json_encode($response);
+        _d($_SESSION);        
         die();
     }
 
@@ -176,6 +201,7 @@ class Api implements ApiInterface{
         global $pdo;
         $game_id = $parsed_request->game_id;
         $_SESSION['spectate_game'] = $game_id;
+        $_SESSION['player_color'] = 'neutral';
         _d($_SESSION);
         $response = new \stdClass();
         $response->status = 'redirect';
