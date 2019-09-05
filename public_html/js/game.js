@@ -1,4 +1,5 @@
 'use strict';
+var chessGame = (function(){
 
 var states = {
     start: 'start',
@@ -665,3 +666,5 @@ function renderBoard() {
 initBoard();
 
 renderBoard();
+
+}) ();
