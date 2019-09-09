@@ -1,6 +1,7 @@
 'use strict';
 var chessGame = (function(){
 
+var moveEvntSource;
 var initiated = false;
 var playerColor = variables.playerColor;
 var states = {
@@ -62,6 +63,43 @@ function removeEventListeners(data, type, funct) {
     data.forEach(x => x.removeEventListener(type,funct));
 }
 
+function toggleListen(){
+    if(initiated){
+        if(typeof moveEvntSource !== 'undefined'){
+            moveEvntSource.close();
+        }else{
+            moveEvntSource = new EventSource(variables.url + 'api/awaitmove');
+            moveEvntSource.onmessage = function(event) {
+                initiated = false;
+                console.log(event.data);
+                displayMoves(event.data[0],event.data[1]);
+                move(event.data[2],event.data[3]);
+                if(gameBoard.state === states.promotion){
+                    switch (movement[4]) {
+                        case 'q':
+                            promote(peaces.queen);                        
+                            break;                    
+                        case 'r':
+                            promote(peaces.rook);
+                            break;
+                        case 'b':
+                            promote(peaces.bishop);
+                            break;
+                        case 'k':
+                            promote(peaces.knight);
+                            break;                    
+                        default:
+                            break;
+                    }
+                }
+                initiated = true;
+                toggleListen();
+                renderBoard();
+            }
+        }
+    }
+}
+
 function displayMoves(col= -1,row = -1) {
     if(initiated){
         var col = this.attributes['col-index'].value,
@@ -74,7 +112,7 @@ function displayMoves(col= -1,row = -1) {
             toggleHighlight(path);
             renderBoard();
         }
-    };
+    }
 }
 
 function getPath(row, col) {
@@ -549,7 +587,7 @@ function move(col = '',row = '') {
             move: '' + selectedPeace.col + selectedPeace.row + col + row
         })
         .then(function (response) {
-            console.log(response.data);
+            //console.log(response.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -560,6 +598,7 @@ function move(col = '',row = '') {
     selectedPeace.isSelected = false;
     toggleTurn();
     renderBoard();
+    toggleListen();
 }
 
 function promote(peace = '') {    
@@ -587,6 +626,7 @@ function promote(peace = '') {
     promoted.col = -1;
     toggleTurn();
     renderBoard();
+    toggleListen();
 }
 
 function toggleTurn() {

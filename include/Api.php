@@ -33,6 +33,9 @@ class Api implements ApiInterface{
             case 'getmovelist':
                 self::getmovelist();     
                 break;
+            case 'awaitmove':
+                self::awaitmove();
+                break;
         }
     }
 
@@ -51,6 +54,24 @@ class Api implements ApiInterface{
             'move_numb' => $move_numb,
             'movement' => $parsed_request->move
         ]);
+    }
+
+    function awaitmove(){
+        global $pdo;
+        header('Content-Type: text/event-stream');
+        header('Cache-Control: no-cache');
+        while(true){
+            $stmt = $pdo->prepare('SELECT move_numb, movement FROM move_list WHERE game_id = ? ORDER BY move_numb DESC');
+            $stmt->execute([
+                $_SESSION['active_game']
+            ]);
+            $last_move = $stmt->fetch();
+            if( ( ($last_move['move_numb'] % 2) == 0 && $_SESSION['player_color'] == 'white') || ( ($last_move['move_numb'] % 2) == 1 && $_SESSION['player_color'] == 'black') ){
+                echo "data:{$last_move['movement']}\n\n";
+                flush();
+                die();
+            }
+        }
     }
 
     function new_user($parsed_request){
@@ -207,8 +228,7 @@ class Api implements ApiInterface{
         $response = new \stdClass();
         $response->status = 'redirect';
         $response->info = 'game';
-        echo json_encode($response);
-        _d($_SESSION);        
+        echo json_encode($response);       
         die();
     }
 
