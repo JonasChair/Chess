@@ -36,6 +36,7 @@ function register(){
                     document.querySelector('#message').innerHTML = response.data.info;
                     break;
                 case 'login':
+                    document.querySelector('#message').innerHTML = response.data.info;
                     openLogin();
                     break;
             }

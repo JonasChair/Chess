@@ -29,12 +29,28 @@ class Api implements ApiInterface{
                 break;
             case 'spectategame':
                 self::spectategame(json_decode(file_get_contents("php://input")));           
-                break;     
+                break;
+            case 'getmovelist':
+                self::getmovelist();     
+                break;
         }
     }
 
     static function move($parsed_request){
-        echo json_encode($parsed_request);
+        global $pdo;
+        
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM move_list WHERE game_id = ?');
+        $stmt->execute([
+            $_SESSION['active_game']
+        ]);
+        $move_numb = $stmt->fetch()['COUNT(*)'] + 1;
+        
+        $stmt = $pdo->prepare('INSERT INTO move_list (game_id,move_numb,movement)  VALUES (:game_id,:move_numb,:movement)');
+        $stmt->execute([
+            'game_id' => $_SESSION['active_game'],
+            'move_numb' => $move_numb,
+            'movement' => $parsed_request->move
+        ]);
     }
 
     function new_user($parsed_request){
@@ -63,6 +79,7 @@ class Api implements ApiInterface{
             ]);
             $response = new \stdClass();
             $response->status = 'login';
+            $response->info = 'Registration succesfull, you can now login!';
             echo json_encode($response);
             die();
         }
@@ -76,11 +93,10 @@ class Api implements ApiInterface{
             $parsed_request->email,
             $parsed_request->password
         ]);
-        $user_info = $stmt->fetchAll()[0];
-        if ($user_info['id']){
-            $_SESSION['user_id'] = $user_info['id'];
-            $_SESSION['username'] = $user_info['nickname'];
-            $_SESSION['rating'] = $user_info['rating'];
+        if ($user_info = $stmt->fetchAll()){
+            $_SESSION['user_id'] = $user_info[0]['id'];
+            $_SESSION['username'] = $user_info[0]['nickname'];
+            $_SESSION['rating'] = $user_info[0]['rating'];
             $_SESSION['status'] = 1; //status 1 -> logedIn
 
             $stmt = $pdo->prepare('SELECT * FROM games WHERE (white_id = ?) AND game_state < 4');
@@ -166,7 +182,6 @@ class Api implements ApiInterface{
             $response->status = 'redirect';
             $response->info = 'game';
             echo json_encode($response);
-            _d($_SESSION);
             die();
         }else{
             $response = new \stdClass();
@@ -206,6 +221,19 @@ class Api implements ApiInterface{
         $response = new \stdClass();
         $response->status = 'redirect';
         $response->info = 'game';
+        echo json_encode($response);
+        die();
+    }
+
+    function getmovelist(){
+        global $pdo;
+        
+        $stmt = $pdo->prepare('SELECT move_numb, movement FROM move_list WHERE game_id = ?');
+        $stmt->execute([$_SESSION['active_game']]);
+        $response = new \stdClass();
+        $response->status = 'movelist';
+        $response->info = $stmt->fetchAll();
+
         echo json_encode($response);
         die();
     }

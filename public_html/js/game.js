@@ -1,6 +1,8 @@
 'use strict';
 var chessGame = (function(){
 
+var initiated = false;
+var playerColor = variables.playerColor;
 var states = {
     start: 'start',
     inProgress: 'in progress',
@@ -60,17 +62,19 @@ function removeEventListeners(data, type, funct) {
     data.forEach(x => x.removeEventListener(type,funct));
 }
 
-function displayMoves() {    
-    var col = this.attributes['col-index'].value,
-        row = this.parentNode.attributes['row-index'].value;
-    if(gameBoard.turn === variables.playerColor){
+function displayMoves(col= -1,row = -1) {
+    if(initiated){
+        var col = this.attributes['col-index'].value,
+            row = this.parentNode.attributes['row-index'].value;
+    };
+    if(gameBoard.turn === playerColor || !initiated){
         if (gameBoard.board[row][col].color === gameBoard.turn) {
             toggleSelect(row,col);
             getPath(row,col);
             toggleHighlight(path);
             renderBoard();
         }
-    }
+    };
 }
 
 function getPath(row, col) {
@@ -472,53 +476,11 @@ function updatePeaceHTML(row, col) {
     peace.coord.col = horizontal[col];
 }
 
-function initBoard() {
-    gameBoard.turn = colors.white;
-    gameBoard.state = states.start;
-
-    for(var i = 0; i < gameBoard.board.length; i++) {
-        gameBoard.board[1][i] = initPeace(peaces.pawn,colors.white,1,i);
-        gameBoard.board[6][i] = initPeace(peaces.pawn,colors.black,6,i);
-
-        gameBoard.board[2][i] = initPeace(peaces.empty,colors.none,2,i);
-        gameBoard.board[3][i] = initPeace(peaces.empty,colors.none,3,i);
-        gameBoard.board[4][i] = initPeace(peaces.empty,colors.none,4,i);
-        gameBoard.board[5][i] = initPeace(peaces.empty,colors.none,5,i);
+function move(col = '',row = '') {
+    if(initiated){
+        var col = this.attributes['col-index'].value,
+            row = this.parentNode.attributes['row-index'].value;
     }
-    gameBoard.board[0][0] = initPeace(peaces.rook,colors.white,0,0);
-    gameBoard.board[0][7] = initPeace(peaces.rook,colors.white,0,7);
-    gameBoard.board[0][1] = initPeace(peaces.knight,colors.white,0,1);
-    gameBoard.board[0][6] = initPeace(peaces.knight,colors.white,0,6);
-    gameBoard.board[0][2] = initPeace(peaces.bishop,colors.white,0,2);
-    gameBoard.board[0][5] = initPeace(peaces.bishop,colors.white,0,5);
-    gameBoard.board[0][3] = initPeace(peaces.queen,colors.white,0,3);
-    gameBoard.board[0][4] = initPeace(peaces.king,colors.white,0,4);
-    
-    gameBoard.board[7][0] = initPeace(peaces.rook,colors.black,7,0);
-    gameBoard.board[7][7] = initPeace(peaces.rook,colors.black,7,7);
-    gameBoard.board[7][1] = initPeace(peaces.knight,colors.black,7,1);
-    gameBoard.board[7][6] = initPeace(peaces.knight,colors.black,7,6);
-    gameBoard.board[7][2] = initPeace(peaces.bishop,colors.black,7,2);
-    gameBoard.board[7][5] = initPeace(peaces.bishop,colors.black,7,5);
-    gameBoard.board[7][3] = initPeace(peaces.queen,colors.black,7,3);
-    gameBoard.board[7][4] = initPeace(peaces.king,colors.black,7,4);
-}
-
-function move() {
-    var col = this.attributes['col-index'].value,
-        row = this.parentNode.attributes['row-index'].value;
-    var position = gameBoard.moves.push( makeNotation(row,col) ) -1;
-    axios.post(variables.url + 'api/move',{
-        notation: gameBoard.moves[position]
-        // move_start: {row: selectedPeace.row, col: selectedPeace.col},
-        // move_end: {row: row, col: col}
-        })
-        .then(function (response) {
-        console.log(response.data);
-        })
-        .catch(function (error) {
-        console.log(error);
-    });
     if(highlighted.length > 0) {
         highlighted.forEach(x => {
             gameBoard.board[x.row][x.col].highlighted = '';
@@ -559,9 +521,6 @@ function move() {
         }
         castle = [];
     }
-    selectedPeace.row = '';
-    selectedPeace.col = '';
-    selectedPeace.isSelected = false;
     if( (row == 7 || row == 0) && gameBoard.board[row][col].name === peaces.pawn) {
         gameBoard.state = states.promotion;
         promoted.row = row;
@@ -583,16 +542,45 @@ function move() {
                     </div>';
         renderBoard();
         return;
-    } 
+    }
+    if(initiated){
+        var position = gameBoard.moves.push( makeNotation(row,col) ) -1;
+        axios.post(variables.url + 'api/move',{
+            move: '' + selectedPeace.col + selectedPeace.row + col + row
+        })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+    selectedPeace.row = '';
+    selectedPeace.col = '';
+    selectedPeace.isSelected = false;
     toggleTurn();
     renderBoard();
 }
 
-function promote() {
-    gameBoard.board[promoted.row][promoted.col].name = this.children[0].classList[1].split("-")[2];
+function promote(peace = '') {    
+    gameBoard.board[promoted.row][promoted.col].name = peace;
+    if(initiated){
+        var promo = this.children[0].classList[1].split("-")[2]
+        gameBoard.board[promoted.row][promoted.col].name = promo;
+        var position = gameBoard.moves.push( makeNotation(promoted.row,promoted.col) ) -1;
+        axios.post(variables.url + 'api/move',{
+            move: '' + selectedPeace.col + selectedPeace.row + promoted.col + promoted.row + promo[0]
+        })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     document.querySelector('#promotion').classList.remove("display");
     document.querySelectorAll('#promotion i').forEach(x => x.classList.remove(gameBoard.turn));
     removeEventListeners(document.querySelectorAll('#promotion .div'),'click',promote);
+    }
     updatePeaceHTML(promoted.row,promoted.col);
     gameBoard.state = states.inProgress;
     promoted.row = -1;
@@ -637,34 +625,107 @@ function makeNotation(row,col) {
     return notation;
 }
 
+function initBoard() {
+    gameBoard.turn = colors.white;
+    gameBoard.state = states.start;
+
+    for(var i = 0; i < gameBoard.board.length; i++) {
+        gameBoard.board[1][i] = initPeace(peaces.pawn,colors.white,1,i);
+        gameBoard.board[6][i] = initPeace(peaces.pawn,colors.black,6,i);
+
+        gameBoard.board[2][i] = initPeace(peaces.empty,colors.none,2,i);
+        gameBoard.board[3][i] = initPeace(peaces.empty,colors.none,3,i);
+        gameBoard.board[4][i] = initPeace(peaces.empty,colors.none,4,i);
+        gameBoard.board[5][i] = initPeace(peaces.empty,colors.none,5,i);
+    }
+    gameBoard.board[0][0] = initPeace(peaces.rook,colors.white,0,0);
+    gameBoard.board[0][7] = initPeace(peaces.rook,colors.white,0,7);
+    gameBoard.board[0][1] = initPeace(peaces.knight,colors.white,0,1);
+    gameBoard.board[0][6] = initPeace(peaces.knight,colors.white,0,6);
+    gameBoard.board[0][2] = initPeace(peaces.bishop,colors.white,0,2);
+    gameBoard.board[0][5] = initPeace(peaces.bishop,colors.white,0,5);
+    gameBoard.board[0][3] = initPeace(peaces.queen,colors.white,0,3);
+    gameBoard.board[0][4] = initPeace(peaces.king,colors.white,0,4);
+    
+    gameBoard.board[7][0] = initPeace(peaces.rook,colors.black,7,0);
+    gameBoard.board[7][7] = initPeace(peaces.rook,colors.black,7,7);
+    gameBoard.board[7][1] = initPeace(peaces.knight,colors.black,7,1);
+    gameBoard.board[7][6] = initPeace(peaces.knight,colors.black,7,6);
+    gameBoard.board[7][2] = initPeace(peaces.bishop,colors.black,7,2);
+    gameBoard.board[7][5] = initPeace(peaces.bishop,colors.black,7,5);
+    gameBoard.board[7][3] = initPeace(peaces.queen,colors.black,7,3);
+    gameBoard.board[7][4] = initPeace(peaces.king,colors.black,7,4);
+
+    axios.post(variables.url + 'api/getmovelist',{
+
+    })
+    .then(function (response){
+        if(response.data.status == 'movelist'){
+            var movelist = response.data.info;
+            movelist.forEach(move => {
+                gameBoard.moves[move.move_numb - 1] = move.movement;
+            });
+        }else{
+            gameBoard.moves = [];
+        }
+        gameBoard.moves.forEach(movement => {
+            displayMoves(movement[0],movement[1]);
+            move(movement[2],movement[3]);
+            if(gameBoard.state === states.promotion){
+                switch (movement[4]) {
+                    case 'q':
+                        promote(peaces.queen);                        
+                        break;                    
+                    case 'r':
+                        promote(peaces.rook);
+                        break;
+                    case 'b':
+                        promote(peaces.bishop);
+                        break;
+                    case 'k':
+                        promote(peaces.knight);
+                        break;                    
+                    default:
+                        break;
+                }
+            }
+        });
+        initiated = true;
+        renderBoard();
+    })
+    .catch(function (error){
+        console.log(error);
+    });
+}
+
 function renderBoard() {
-    var HTML = '';
-    removeEventListeners(document.querySelectorAll('.game-board .row > div'),'click',displayMoves);
-    removeEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
-    for(var i = 0; i < gameBoard.board.length; i++){
-        HTML += '<div class="row" row-index="' + i + '">';
-        for(var j = 0; j < gameBoard.board[i].length; j++) {
-            HTML += '<div col-index="' + j + '" class="'+ gameBoard.board[i][j].highlighted +'">';
-            HTML += gameBoard.board[i][j].HTML;
+    if(initiated){
+        var HTML = '';
+        removeEventListeners(document.querySelectorAll('.game-board .row > div'),'click',displayMoves);
+        removeEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
+        for(var i = 0; i < gameBoard.board.length; i++){
+            HTML += '<div class="row" row-index="' + i + '">';
+            for(var j = 0; j < gameBoard.board[i].length; j++) {
+                HTML += '<div col-index="' + j + '" class="'+ gameBoard.board[i][j].highlighted +'">';
+                HTML += gameBoard.board[i][j].HTML;
+                HTML += '</div>';
+            }
             HTML += '</div>';
         }
-        HTML += '</div>';
-    }
-    document.querySelector('.game-board').innerHTML = HTML;
-    if(gameBoard.state == states.promotion) {
-        document.querySelector('#promotion').classList.add('display');
-        document.querySelectorAll('#promotion i').forEach(x => x.classList.add(gameBoard.turn));
-        addEventListeners(document.querySelectorAll('#promotion div'),'click',promote);
+        document.querySelector('.game-board').innerHTML = HTML;
+        if(gameBoard.state == states.promotion) {
+            document.querySelector('#promotion').classList.add('display');
+            document.querySelectorAll('#promotion i').forEach(x => x.classList.add(gameBoard.turn));
+            addEventListeners(document.querySelectorAll('#promotion div'),'click',promote);
+            return;
+        }
+        addEventListeners(document.querySelectorAll('.game-board .row > div'),'click',displayMoves);
+        addEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
+        
         return;
     }
-    addEventListeners(document.querySelectorAll('.game-board .row > div'),'click',displayMoves);
-    addEventListeners(document.querySelectorAll('.game-board .row > div.highlighted'),'click',move);
-    
-    return;
 }
 
 initBoard();
-
-renderBoard();
 
 }) ();
