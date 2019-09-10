@@ -6,7 +6,8 @@ function url($location = ''){
 
 function jsvariables(){
     return '<script>var variables;
-            variables = {url :"'. URL .'"};
+            variables = {url :"'. URL .'",
+                        playerColor : "'. (isset($_SESSION['player_color']) ? $_SESSION['player_color'] : "neutral") .'"};
             </script>';
 }
 

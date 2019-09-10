@@ -63,7 +63,5 @@ include DIR.'templates/header.php';
         </section>
     </div>
 </body>
-<script src=<?= url('js/data.js')?>></script>
-<script src=<?= url('js/function.js')?>></script>
-<script src=<?= url('js/actions.js')?>></script>
+<script src=<?= url('js/game.js')?>></script>
 </html>
