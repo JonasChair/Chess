@@ -61,6 +61,7 @@ class Api implements ApiInterface{
         header('Content-Type: text/event-stream');
         header('Cache-Control: no-cache');
         while(true){
+            sleep(1);
             $stmt = $pdo->prepare('SELECT move_numb, movement FROM move_list WHERE game_id = ? ORDER BY move_numb DESC');
             $stmt->execute([
                 $_SESSION['active_game']
@@ -71,6 +72,8 @@ class Api implements ApiInterface{
                 flush();
                 die();
             }
+            echo ':staying alive\n\n';
+            flush();
         }
     }
 

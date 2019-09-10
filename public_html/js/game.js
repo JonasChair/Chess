@@ -63,41 +63,41 @@ function removeEventListeners(data, type, funct) {
     data.forEach(x => x.removeEventListener(type,funct));
 }
 
-function toggleListen(){
+function startListen(){
     if(initiated){
-        if(typeof moveEvntSource !== 'undefined'){
-            moveEvntSource.close();
-        }else{
-            moveEvntSource = new EventSource(variables.url + 'api/awaitmove');
-            moveEvntSource.onmessage = function(event) {
-                initiated = false;
-                console.log(event.data);
-                displayMoves(event.data[0],event.data[1]);
-                move(event.data[2],event.data[3]);
-                if(gameBoard.state === states.promotion){
-                    switch (movement[4]) {
-                        case 'q':
-                            promote(peaces.queen);                        
-                            break;                    
-                        case 'r':
-                            promote(peaces.rook);
-                            break;
-                        case 'b':
-                            promote(peaces.bishop);
-                            break;
-                        case 'k':
-                            promote(peaces.knight);
-                            break;                    
-                        default:
-                            break;
-                    }
+        moveEvntSource = new EventSource(variables.url + 'api/awaitmove');
+        moveEvntSource.onmessage = function(event) {
+            initiated = false;
+            console.log(event.data);
+            displayMoves(event.data[0],event.data[1]);
+            move(event.data[2],event.data[3]);
+            if(gameBoard.state === states.promotion){
+                switch (movement[4]) {
+                    case 'q':
+                        promote(peaces.queen);                        
+                        break;                    
+                    case 'r':
+                        promote(peaces.rook);
+                        break;
+                    case 'b':
+                        promote(peaces.bishop);
+                        break;
+                    case 'k':
+                        promote(peaces.knight);
+                        break;                    
+                    default:
+                        break;
                 }
-                initiated = true;
-                toggleListen();
-                renderBoard();
             }
+            initiated = true;
+            stopListen();
+            renderBoard();
         }
     }
+}
+
+function stopListen(){
+    moveEvntSource.close();
 }
 
 function displayMoves(col= -1,row = -1) {
@@ -598,7 +598,7 @@ function move(col = '',row = '') {
     selectedPeace.isSelected = false;
     toggleTurn();
     renderBoard();
-    toggleListen();
+    startListen();
 }
 
 function promote(peace = '') {    
@@ -626,7 +626,7 @@ function promote(peace = '') {
     promoted.col = -1;
     toggleTurn();
     renderBoard();
-    toggleListen();
+    startListen();
 }
 
 function toggleTurn() {
@@ -732,6 +732,9 @@ function initBoard() {
         });
         initiated = true;
         renderBoard();
+        if(playerColor !== gameBoard.turn){
+            startListen();
+        }
     })
     .catch(function (error){
         console.log(error);
