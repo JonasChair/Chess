@@ -36,7 +36,17 @@ class Api implements ApiInterface{
             case 'awaitmove':
                 self::awaitmove();
                 break;
+            default:
+                break;
         }
+    }
+
+    function send_response($status,$info){
+        $response = new \stdClass();
+        $response->status = $status;
+        $response->info = $info;
+        echo json_encode($response);
+        die();
     }
 
     static function move($parsed_request){
@@ -87,11 +97,7 @@ class Api implements ApiInterface{
         ]);
 
         if(sizeof($stmt->fetchAll()) > 0){
-            $response = new \stdClass();
-            $response->status = 'error';
-            $response->info = 'Email already registered';
-            echo json_encode($response);
-            die();
+            send_response('error','Email already registered');
         }else{
             $stmt = $pdo->prepare('INSERT INTO users (email, password, nickname)
                 VALUES (:email, :password , :username)');
@@ -101,16 +107,13 @@ class Api implements ApiInterface{
                 'password' => $parsed_request->password,
                 'username' => $parsed_request->username
             ]);
-            $response = new \stdClass();
-            $response->status = 'login';
-            $response->info = 'Registration succesfull, you can now login!';
-            echo json_encode($response);
-            die();
+            send_response('login','Registration succesfull, you can now login!');
         }
     }
 
     function login($parsed_request){
         global $pdo;
+
         $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ? and password = ?');
 
         $stmt->execute([
@@ -141,24 +144,12 @@ class Api implements ApiInterface{
                 $_SESSION['player_color'] = 'black';
             };
             if($game){
-                $response = new \stdClass();
-                $response->status = 'redirect';
-                $response->info = 'game';
-                echo json_encode($response);
-                die();
+                send_response('redirect','game');
             }else{
-                $response = new \stdClass();
-                $response->status = 'redirect';
-                $response->info = 'games';
-                echo json_encode($response);
-                die();
+                send_response('redirect','games');
             }
         }else{
-            $response = new \stdClass();
-            $response->status = 'error';
-            $response->info = 'Wrong information please try again.';
-            echo json_encode($response);
-            die();
+            send_response('error','Wrong information please try again.');
         }
     }
 
@@ -170,6 +161,7 @@ class Api implements ApiInterface{
 
     function newgame(){
         global $pdo;
+
         if(isset($_SESSION['status']) && $_SESSION['status'] == 1){
             $stmt = $pdo->prepare('SELECT * FROM games WHERE (white_id = ?) AND game_state < 4');
             $stmt->execute([
@@ -202,22 +194,15 @@ class Api implements ApiInterface{
                 $_SESSION['active_game'] = $stmt->fetch()['id'];
                 $_SESSION['player_color'] = 'white';
             }
-            $response = new \stdClass();
-            $response->status = 'redirect';
-            $response->info = 'game';
-            echo json_encode($response);
-            die();
+            send_response('redirect','game');
         }else{
-            $response = new \stdClass();
-            $response->status = 'error';
-            $response->info = 'Not logged in';
-            echo json_encode($response);
-            die();
+            send_response('error','Not logged in');
         }
     }
 
     function joingame($parsed_request){
         global $pdo;
+
         $game_id = $parsed_request->game_id;
         $stmt = $pdo->prepare('UPDATE games SET black_id =:black_id, black_rating=:black_rating, game_state = 2 WHERE id = :game_id');
         $stmt->execute([
@@ -227,25 +212,18 @@ class Api implements ApiInterface{
         ]);
         $_SESSION['active_game'] = $game_id;
         $_SESSION['player_color'] = 'black';
-
-        $response = new \stdClass();
-        $response->status = 'redirect';
-        $response->info = 'game';
-        echo json_encode($response);       
-        die();
+        
+        send_response('redirect','game');    
     }
 
     function spectategame($parsed_request){
         global $pdo;
+
         $game_id = $parsed_request->game_id;
         $_SESSION['spectate_game'] = $game_id;
         $_SESSION['player_color'] = 'neutral';
-        _d($_SESSION);
-        $response = new \stdClass();
-        $response->status = 'redirect';
-        $response->info = 'game';
-        echo json_encode($response);
-        die();
+
+        send_response('redirect','game');
     }
 
     function getmovelist(){
@@ -253,11 +231,7 @@ class Api implements ApiInterface{
         
         $stmt = $pdo->prepare('SELECT move_numb, movement FROM move_list WHERE game_id = ?');
         $stmt->execute([$_SESSION['active_game']]);
-        $response = new \stdClass();
-        $response->status = 'movelist';
-        $response->info = $stmt->fetchAll();
 
-        echo json_encode($response);
-        die();
+        send_response('movelist',$stmt->fetchAll());
     }
 }

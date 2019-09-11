@@ -1,7 +1,14 @@
-<?php 
+<?php
 define ('DIR', __DIR__.'/../');
 include DIR.'include/config_production.php';
 include DIR.'include/functions.php';
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('log_errors',1);
+// ini_set('error_log', DIR.'/logas.log' );
+// error_log('Testukas');
 
 $installFolder = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
 $file = str_replace($installFolder, '', $_SERVER['REQUEST_URI']);
@@ -9,9 +16,8 @@ $file = preg_replace('/\?.+$/', '', $file);
 
 $api = new chess\Api;
 
-
 if (preg_match('/^api/', $file)){
-    $request = preg_replace('/^api\//','',$file);
+    $request = preg_replace('/^api/','',$file);
     $api->call_func($api->parse_request($request));
     die();
 }
