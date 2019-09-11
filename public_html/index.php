@@ -11,13 +11,14 @@ include DIR.'include/functions.php';
 // error_log('Testukas');
 
 $installFolder = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
-$file = str_replace($installFolder, '', $_SERVER['REQUEST_URI']);
+$installFolder = str_replace('/', '\/',$installFolder);
+$file = preg_replace('/^'.$installFolder.'/', '', $_SERVER['REQUEST_URI']);
 $file = preg_replace('/\?.+$/', '', $file);
 
 $api = new chess\Api;
 
 if (preg_match('/^api/', $file)){
-    $request = preg_replace('/^api/','',$file);
+    $request = preg_replace('/^api\//','',$file);
     $api->call_func($api->parse_request($request));
     die();
 }

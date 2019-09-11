@@ -1,21 +1,25 @@
-function openRegistry(){    
+function openRegistry(){ 
     document.querySelector('#password2').addEventListener('input',checkPassword);
-    document.querySelector('#password').addEventListener('input',checkPassword);    
+    document.querySelector('#password').addEventListener('input',checkPassword);
+    document.querySelector('#username').addEventListener('input',checkUsername);
+    document.querySelector('#email').addEventListener('input',checkEmail);    
     document.querySelectorAll('.register').forEach(x => x.classList.remove('displayNone'));
     document.querySelector('#register').removeEventListener('click',openRegistry);
     document.querySelector('#register').addEventListener('click',register);
     document.querySelector('#logIn').removeEventListener('click',login);
     document.querySelector('#logIn').addEventListener('click',openLogin);
+    state = 'register';
 }
 
 function openLogin(){
     document.querySelector('#message').innerHTML = "";
+    document.querySelector('#register').removeEventListener('click',register);
     document.querySelector('#register').addEventListener('click',openRegistry);   
     document.querySelectorAll('.register').forEach(x => x.classList.add('displayNone'));
     document.querySelector('#logIn').addEventListener('click',login);
-    document.querySelector('#register').removeEventListener('click',register);
+    state = 'login';
 }
-
+var state = 'login';
 var states = {
     username: false,
     email: false,
@@ -108,6 +112,8 @@ function login(){
             case 'redirect':
                 window.location.replace(variables.url + response.data.info);
                 break;
+            default:
+                break;
         }
     })
     .catch(function (error) {
@@ -116,6 +122,19 @@ function login(){
 }
 
 document.querySelector('#logIn').addEventListener('click',login);
-document.querySelector('#username').addEventListener('input',checkUsername);
 document.querySelector('#register').addEventListener('click',openRegistry);
-document.querySelector('#email').addEventListener('input',checkEmail);
+
+document.addEventListener('keypress', function (e){
+    if (e.key === 'Enter'){
+        switch (state) {
+            case 'login':                
+                login();
+                break;
+            case 'register':
+                register();
+                break;
+            default:
+                break;
+        }
+    }
+});

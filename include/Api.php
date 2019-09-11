@@ -41,7 +41,7 @@ class Api implements ApiInterface{
         }
     }
 
-    function send_response($status,$info){
+    static private function send_response($status,$info){
         $response = new \stdClass();
         $response->status = $status;
         $response->info = $info;
@@ -49,7 +49,7 @@ class Api implements ApiInterface{
         die();
     }
 
-    static function move($parsed_request){
+    static private function move($parsed_request){
         global $pdo;
         
         $stmt = $pdo->prepare('SELECT COUNT(*) FROM move_list WHERE game_id = ?');
@@ -66,7 +66,7 @@ class Api implements ApiInterface{
         ]);
     }
 
-    function awaitmove(){
+    static private function awaitmove(){
         global $pdo;
         header('Content-Type: text/event-stream');
         header('Cache-Control: no-cache');
@@ -87,7 +87,7 @@ class Api implements ApiInterface{
         }
     }
 
-    function new_user($parsed_request){
+    static private function new_user($parsed_request){
         global $pdo;
 
         $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');
@@ -97,7 +97,7 @@ class Api implements ApiInterface{
         ]);
 
         if(sizeof($stmt->fetchAll()) > 0){
-            send_response('error','Email already registered');
+            self::send_response('error','Email already registered');
         }else{
             $stmt = $pdo->prepare('INSERT INTO users (email, password, nickname)
                 VALUES (:email, :password , :username)');
@@ -107,11 +107,11 @@ class Api implements ApiInterface{
                 'password' => $parsed_request->password,
                 'username' => $parsed_request->username
             ]);
-            send_response('login','Registration succesfull, you can now login!');
+            self::send_response('login','Registration succesfull, you can now login!');
         }
     }
 
-    function login($parsed_request){
+    static private function login($parsed_request){
         global $pdo;
 
         $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ? and password = ?');
@@ -143,23 +143,23 @@ class Api implements ApiInterface{
                 $_SESSION['active_game'] = $game['id'];
                 $_SESSION['player_color'] = 'black';
             };
-            if($game){
-                send_response('redirect','game');
+            if(isset($game)){
+                self::send_response('redirect','game');
             }else{
-                send_response('redirect','games');
+                self::send_response('redirect','games');
             }
         }else{
-            send_response('error','Wrong information please try again.');
+            self::send_response('error','Wrong information please try again.');
         }
     }
 
-    function logoff($parsed_request){
+    static private function logoff($parsed_request){
         session_destroy();
         header('Location: '.url());
         die();
     }
 
-    function newgame(){
+    static private function newgame(){
         global $pdo;
 
         if(isset($_SESSION['status']) && $_SESSION['status'] == 1){
@@ -194,13 +194,13 @@ class Api implements ApiInterface{
                 $_SESSION['active_game'] = $stmt->fetch()['id'];
                 $_SESSION['player_color'] = 'white';
             }
-            send_response('redirect','game');
+            self::send_response('redirect','game');
         }else{
-            send_response('error','Not logged in');
+            self::send_response('error','Not logged in');
         }
     }
 
-    function joingame($parsed_request){
+    static private function joingame($parsed_request){
         global $pdo;
 
         $game_id = $parsed_request->game_id;
@@ -213,10 +213,10 @@ class Api implements ApiInterface{
         $_SESSION['active_game'] = $game_id;
         $_SESSION['player_color'] = 'black';
         
-        send_response('redirect','game');    
+        self::send_response('redirect','game');    
     }
 
-    function spectategame($parsed_request){
+    static private function spectategame($parsed_request){
         global $pdo;
 
         $game_id = $parsed_request->game_id;
@@ -226,12 +226,12 @@ class Api implements ApiInterface{
         send_response('redirect','game');
     }
 
-    function getmovelist(){
+    static private function getmovelist(){
         global $pdo;
         
         $stmt = $pdo->prepare('SELECT move_numb, movement FROM move_list WHERE game_id = ?');
         $stmt->execute([$_SESSION['active_game']]);
 
-        send_response('movelist',$stmt->fetchAll());
+        self::send_response('movelist',$stmt->fetchAll());
     }
 }
