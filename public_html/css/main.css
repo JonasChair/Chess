@@ -1,6 +1,6 @@
 body, body *{
-    margin:0;
-    padding:0;
+    margin:5px;
+    padding:5px;
     vertical-align: top;
     box-sizing: border-box;
 }
@@ -14,7 +14,7 @@ body{
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    filter: blur(4px);
+    filter: blur(3px);
     height: calc( 100vh - 50px);
     width: 100vw;
     position: absolute;
