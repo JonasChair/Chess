@@ -76,6 +76,7 @@ body{
             .form {
                 display: inline-block;
                 float: left;
+                border-radius: 25% 10%;
                 width: 100%;
                 text-transform: uppercase;
                 color: #C0C0C0;       
@@ -89,6 +90,7 @@ body{
                     margin-bottom: 30px;
                     margin-top: 15px;
                     border: none;
+                    border-radius: 25% 10%;
                     border-bottom: 1px solid #C0C0C0;
                     padding-top: 5px;
                 }
@@ -106,6 +108,7 @@ body{
                 }
                 .form > .register {
                     display: inline-block;
+                    border-radius: 25% 10%;
                     width: 100%;
                     animation-name: register;
                     animation-duration: 0.3s;
